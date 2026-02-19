@@ -1,0 +1,85 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results | Stylehub</title>
+    <!-- Load theme.css for global Header/Footer styles -->
+    <link rel="stylesheet" href="{% static 'theme.css' %}">
+    <!-- Load style4.css for Grid/Content specific styles -->
+    <link rel="stylesheet" href= "{% static 'style4.css' %}">
+    <script src="{% static 'main.js' %}" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Standard Navbar -->
+    <nav class="navbar">
+        <div class="logo">Style<span>hub</span></div>
+       <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'pro_list' %}">Shop</a></li>
+    <li><a href="{% url 'new' %}">New Arrivals</a></li>
+    <li><a href="{% url 'contact' %}">Contact</a></li>
+    
+    {% if user.is_authenticated %}
+        <!-- LOGOUT REMOVED, PROFILE ADDED -->
+        <li><a href="{% url 'profile' %}">Profile</a></li>
+    {% else %}
+        <li><a href="{% url 'auth' %}">Login</a></li>
+    {% endif %}
+</ul>
+        <div class="nav-icons" style="display: flex; align-items: center;">
+            <!-- Embedded Search -->
+            <form action="{% url 'search_result' %}" method="GET" class="search-form" style="margin-right: 15px;">
+                <input type="text" name="q" class="search-input" placeholder="Search..." value="{{ query }}">
+                <button type="submit" class="search-btn">🔍</button>
+            </form>
+            <a href="{% url 'cart' %}" class="cart-link" style="text-decoration:none; margin-right:5px; font-size: 1.2rem;">
+                🛒 <span class="global-badge">{{ cart_count|default:0 }}</span>
+            </a>
+            <button id="theme-toggle" class="theme-toggle">🌙</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <header class="search-info">
+            <h1>Search results for: <span>"{{ query }}"</span></h1>
+            <p>{{ products|length }} items found</p>
+        </header>
+
+        {% if products %}
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card">
+                 {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                {% endif %}
+                <div class="card-details">
+                    <h3>{{ product.name }}</h3>
+                    <p class="price">${{ product.price }}</p>
+                    <a href="{% url 'pro_detail' product.slug %}">
+                        <button class="add-btn">View Item</button>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-results">
+            <div class="empty-icon">🔎</div>
+            <h2>Sorry, we couldn't find any matches</h2>
+            <p>Try checking your spelling or using more general terms.</p>
+            <a href="{% url 'pro_list' %}" class="browse-btn">Browse All Products</a>
+        </div>
+        {% endif %}
+    </main>
+
+    
+
+</body>
+</html>

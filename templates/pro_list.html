@@ -1,0 +1,254 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop All | Stylehub</title>
+    <link rel="stylesheet" href="{% static 'theme.css' %}">
+    <link rel="stylesheet" href="{% static 'style2.css' %}">
+    <script src="{% static 'main.js' %}" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Style<span>hub</span></div>
+        <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'pro_list' %}">Shop</a></li>
+    <li><a href="{% url 'new' %}">New Arrivals</a></li>
+    <li><a href="{% url 'contact' %}">Contact</a></li>
+    
+    {% if user.is_authenticated %}
+        <!-- LOGOUT REMOVED, PROFILE ADDED -->
+        <li><a href="{% url 'profile' %}">Profile</a></li>
+    {% else %}
+        <li><a href="{% url 'auth' %}">Login</a></li>
+    {% endif %}
+</ul>
+        <div class="nav-icons" style="display: flex; align-items: center;">
+            <!-- Added Search Form -->
+            <form action="{% url 'search_result' %}" method="GET" class="search-form">
+                <input type="text" name="q" class="search-input" placeholder="Search..." required>
+                <button type="submit" class="search-btn">🔍</button>
+            </form>
+            
+            <a href="{% url 'cart' %}" class="cart-link">
+                🛒 <span class="global-badge">{{ cart_count|default:0 }}</span>
+            </a>
+            <button id="theme-toggle" class="theme-toggle">🌙</button>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <aside class="sidebar reveal-on-scroll">
+
+            <a href="{% url 'wishlist' %}" class="wishlist-sidebar-btn">
+        ❤️ View My Wishlist
+    </a>
+            <h3>Filters</h3>
+            <div class="filter-group">
+                <h4>Category</h4>
+                <label><input type="checkbox" value="t-shirts" class="filter-checkbox" checked> T-Shirts</label>
+                <label><input type="checkbox" value="jeans" class="filter-checkbox" checked> Jeans</label>
+                <label><input type="checkbox" value="jackets" class="filter-checkbox" checked> Jackets</label>
+                <label><input type="checkbox" value="tops" class="filter-checkbox" checked> Tops</label>
+                <label><input type="checkbox" value="outerwear" class="filter-checkbox" checked> Outerwear</label>
+                <label><input type="checkbox" value="bottoms" class="filter-checkbox" checked> Bottoms</label>
+            </div>
+            <div class="filter-group">
+                <h4>Max Price: $<span id="price-value">500</span></h4>
+                <input type="range" id="price-range" min="0" max="500" value="500" step="10">
+                <div class="price-input-row">
+                    <input type="number" id="price-input" value="500" min="0" max="500">
+                </div>
+            </div>
+            <div class="filter-group">
+                <h4>Size</h4>
+                <div class="size-chips" id="size-filters">
+                    <button data-size="all" class="active">All</button>
+                    <button data-size="s">S</button>
+                    <button data-size="m">M</button>
+                    <button data-size="l">L</button>
+                    <button data-size="xl">XL</button>
+                </div>
+            </div>
+            <button id="reset-filters" class="view-btn" style="margin-top:10px; background:#ff4757; color:white; border:none; width:100%; padding:10px; cursor:pointer;">Reset Filters</button>
+        </aside>
+
+        <main class="shop-content">
+            <div class="shop-header reveal-on-scroll">
+                <p>Showing <span id="showing-start">1</span>–<span id="showing-end">{{ products|length }}</span> of <span id="total-products">{{ products|length }}</span> results</p>
+                <select class="sort-dropdown" id="sort-select">
+                    <option value="default">Default Sorting</option>
+                    <option value="low-high">Price: Low to High</option>
+                    <option value="high-low">Price: High to Low</option>
+                    <option value="newest">Newest First</option>
+                </select>
+            </div>
+
+            <div class="product-grid" id="product-grid">
+                {% for product in products %}
+                <div class="product-card reveal-on-scroll" 
+                     data-category="{{ product.category.slug }}" 
+                     data-price="{{ product.price }}" 
+                     data-size="m" 
+                     data-date="{{ product.created_at|date:'Y-m-d' }}">
+                    
+                    <a href="{% url 'pro_detail' product.slug %}" class="product-image">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                        {% endif %}
+                    </a>
+                    
+                    <div class="card-content">
+                        <div class="card-header">
+                            <h3>{{ product.name }}</h3>
+                            <span class="price">${{ product.price }}</span>
+                        </div>
+                        <p class="card-desc">{{ product.description|truncatewords:5 }}</p>
+                        <div class="info-pills">
+                            <div class="info-pill">
+                                <span class="pill-label">Category</span>
+                                <span class="pill-value">{{ product.category.name }}</span>
+                            </div>
+                        </div>
+                        <a href="{% url 'add_to_cart' product.id %}" class="ajax-add-to-cart" style="text-decoration:none;">
+                            <button class="add-cart">Add to Cart</button>
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No products found.</p>
+                {% endfor %}
+            </div>
+
+            <div class="pagination reveal-on-scroll" id="pagination"></div>
+        </main>
+    </div>
+
+    <footer class="site-footer reveal-on-scroll">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h2 class="footer-logo">Stylehub™</h2>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <div class="social-icons">
+                    <a href="#">📷</a>
+                    <a href="#">fb</a>
+                    <a href="#">✕</a>
+                    <a href="#">▶</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Extra links</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="{% url 'pro_list' %}">Shop</a></li>
+                    <li><a href="{% url 'new' %}">New Arrivals</a></li>
+                    <li><a href="{% url 'contact' %}">Our Team</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact</h3>
+                <p>123 Fashion Street<br>Mumbai, MH 400001</p>
+                <p><a href="mailto:email@stylehub.com">email@stylehub.com</a></p>
+                <p>(+91) 98765 43210</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const itemsPerPage = 12;
+            let currentPage = 1;
+            let filteredProducts = [];
+            const productGrid = document.getElementById('product-grid');
+            const allProducts = Array.from(document.querySelectorAll('.product-card'));
+            const paginationContainer = document.getElementById('pagination');
+            const totalResultSpan = document.getElementById('total-products');
+            const showingStart = document.getElementById('showing-start');
+            const showingEnd = document.getElementById('showing-end');
+            const searchCheckboxes = document.querySelectorAll('.filter-checkbox');
+            const priceRange = document.getElementById('price-range');
+            const priceInput = document.getElementById('price-input');
+            const priceValueText = document.getElementById('price-value');
+            const sizeButtons = document.querySelectorAll('#size-filters button');
+            const sortSelect = document.getElementById('sort-select');
+            const resetBtn = document.getElementById('reset-filters');
+            let activeSize = 'all';
+
+            function init() { filterProducts(); }
+            searchCheckboxes.forEach(box => { box.addEventListener('change', () => { filterProducts(); }); });
+            priceRange.addEventListener('input', function() { const val = this.value; priceInput.value = val; priceValueText.innerText = val; filterProducts(); });
+            priceInput.addEventListener('input', function() { let val = parseInt(this.value); if(val > 500) val = 500; if(val < 0) val = 0; priceRange.value = val; priceValueText.innerText = val; filterProducts(); });
+            sizeButtons.forEach(btn => { btn.addEventListener('click', function() { sizeButtons.forEach(b => b.classList.remove('active')); this.classList.add('active'); activeSize = this.dataset.size; filterProducts(); }); });
+            sortSelect.addEventListener('change', function() { sortFilteredProducts(); });
+            resetBtn.addEventListener('click', function() { searchCheckboxes.forEach(box => box.checked = true); priceRange.value = 500; priceInput.value = 500; priceValueText.innerText = 500; sizeButtons.forEach(b => b.classList.remove('active')); sizeButtons[0].classList.add('active'); activeSize = 'all'; sortSelect.value = 'default'; filterProducts(); });
+
+            function filterProducts() {
+                const activeCategories = Array.from(searchCheckboxes).filter(box => box.checked).map(box => box.value);
+                const maxPrice = parseInt(priceRange.value);
+                filteredProducts = allProducts.filter(card => {
+                    const category = card.dataset.category;
+                    const price = parseFloat(card.dataset.price);
+                    const size = card.dataset.size;
+                    const categoryMatch = activeCategories.length === 0 || activeCategories.includes(category);
+                    const priceMatch = price <= maxPrice;
+                    let sizeMatch = true;
+                    if (activeSize !== 'all') { sizeMatch = (size === activeSize) || (size === 'all'); }
+                    return categoryMatch && priceMatch && sizeMatch;
+                });
+                sortFilteredProducts(false); currentPage = 1; displayProducts(); setupPagination();
+            }
+
+            function sortFilteredProducts(updateDisplay = true) {
+                const sortValue = sortSelect.value;
+                filteredProducts.sort((a, b) => {
+                    const priceA = parseFloat(a.dataset.price); const priceB = parseFloat(b.dataset.price);
+                    const dateA = new Date(a.dataset.date); const dateB = new Date(b.dataset.date);
+                    if (sortValue === 'low-high') return priceA - priceB;
+                    if (sortValue === 'high-low') return priceB - priceA;
+                    if (sortValue === 'newest') return dateB - dateA;
+                    return 0;
+                });
+                if(updateDisplay) { displayProducts(); setupPagination(); }
+            }
+
+            function displayProducts() {
+                allProducts.forEach(p => p.style.display = 'none');
+                totalResultSpan.innerText = filteredProducts.length;
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const paginatedItems = filteredProducts.slice(start, end);
+                paginatedItems.forEach(item => { item.style.display = 'flex'; });
+                if(filteredProducts.length === 0) { showingStart.innerText = 0; showingEnd.innerText = 0; } 
+                else { showingStart.innerText = start + 1; showingEnd.innerText = Math.min(end, filteredProducts.length); }
+            }
+
+            function setupPagination() {
+                paginationContainer.innerHTML = '';
+                const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
+                if (pageCount <= 1) return;
+                const prevBtn = document.createElement('button'); prevBtn.innerText = '←'; prevBtn.disabled = currentPage === 1;
+                prevBtn.onclick = () => { if(currentPage > 1) { currentPage--; displayProducts(); setupPagination(); }};
+                paginationContainer.appendChild(prevBtn);
+                for(let i=1; i<=pageCount; i++) {
+                    const btn = document.createElement('button'); btn.innerText = i;
+                    if(i === currentPage) btn.classList.add('active');
+                    btn.onclick = () => { currentPage = i; displayProducts(); setupPagination(); };
+                    paginationContainer.appendChild(btn);
+                }
+                const nextBtn = document.createElement('button'); nextBtn.innerText = '→'; nextBtn.disabled = currentPage === pageCount;
+                nextBtn.onclick = () => { if(currentPage < pageCount) { currentPage++; displayProducts(); setupPagination(); }};
+                paginationContainer.appendChild(nextBtn);
+            }
+            init();
+        });
+    </script>
+</body>
+</html>

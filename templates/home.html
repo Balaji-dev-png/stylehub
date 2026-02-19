@@ -1,0 +1,115 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stylehub | Modern Fashion Store</title>
+    <link rel="stylesheet" href="{% static 'theme.css' %}">
+    <link rel="stylesheet" href="{% static 'style1.css' %}">
+    <script src="{% static 'main.js' %}" defer></script> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo">Style<span>hub</span></div>
+            <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'pro_list' %}">Shop</a></li>
+    <li><a href="{% url 'new' %}">New Arrivals</a></li>
+    <li><a href="{% url 'contact' %}">Contact</a></li>
+    
+    {% if user.is_authenticated %}
+        <!-- LOGOUT REMOVED, PROFILE ADDED -->
+        <li><a href="{% url 'profile' %}">Profile</a></li>
+    {% else %}
+        <li><a href="{% url 'auth' %}">Login</a></li>
+    {% endif %}
+</ul>
+            <div class="nav-icons" style="display: flex; align-items: center;">
+                <form action="{% url 'search_result' %}" method="GET" class="search-form">
+                    <input type="text" name="q" class="search-input" placeholder="Search..." required>
+                    <button type="submit" class="search-btn">🔍</button>
+                </form>
+                <a href="{% url 'cart' %}" class="cart-link">
+                    🛒 <span class="global-badge">{{ cart_count|default:0 }}</span>
+                </a>
+                <button id="theme-toggle" class="theme-toggle">🌙</button>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero reveal-on-scroll">
+        <div class="hero-content">
+            <h1>Elevate Your Style</h1>
+            <p>Discover the latest trends in fashion with Stylehub's exclusive 2026 collection.</p>
+            <a href="{% url 'pro_list' %}" class="cta-button">Shop Now</a>
+        </div>
+    </section>
+
+    <section class="featured-products" id="shop">
+        <h2 class="section-title reveal-on-scroll">Featured Clothing</h2>
+        <div class="product-grid">
+            {% for product in featured_products %}
+            <div class="product-card reveal-on-scroll">
+                <a href="{% url 'pro_detail' product.slug %}" class="product-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                    {% endif %}
+                </a>
+                <div class="card-content">
+                    <div class="card-header"><h3>{{ product.name }}</h3><span class="price">${{ product.price }}</span></div>
+                    <p class="card-desc">{{ product.description|truncatewords:8 }}</p>
+                    <div class="info-pills">
+                        <div class="info-pill"><span class="pill-label">Category</span><span class="pill-value">{{ product.category.name }}</span></div>
+                        <div class="info-pill"><span class="pill-label">Rating</span><span class="pill-value">{{ product.rating }} ★</span></div>
+                    </div>
+                    <a href="{% url 'add_to_cart' product.id %}" class="ajax-add-to-cart" style="text-decoration: none;">
+                        <button class="add-cart">Add to Cart</button>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <p>No featured products available.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <footer class="site-footer reveal-on-scroll">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h2 class="footer-logo">Stylehub™</h2>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <div class="social-icons">
+                    <a href="#">📷</a>
+                    <a href="#">fb</a>
+                    <a href="#">✕</a>
+                    <a href="#">▶</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Extra links</h3>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'pro_list' %}">Shop</a></li>
+                    <li><a href="{% url 'new' %}">New Arrivals</a></li>
+                    <li><a href="{% url 'contact' %}">Our Team</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact</h3>
+                <p>123 Fashion Street<br>Mumbai, MH 400001</p>
+                <p><a href="mailto:email@stylehub.com">email@stylehub.com</a></p>
+                <p>(+91) 98765 43210</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

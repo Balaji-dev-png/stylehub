@@ -1,0 +1,125 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | Stylehub</title>
+    <link rel="stylesheet" href="{% static 'theme.css' %}">
+    <link rel="stylesheet" href="{% static 'style5.css' %}">
+    <script src="{% static 'main.js' %}" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Style<span>hub</span></div>
+        <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'pro_list' %}">Shop</a></li>
+    <li><a href="{% url 'new' %}">New Arrivals</a></li>
+    <li><a href="{% url 'contact' %}">Contact</a></li>
+    
+    {% if user.is_authenticated %}
+        <!-- LOGOUT REMOVED, PROFILE ADDED -->
+        <li><a href="{% url 'profile' %}">Profile</a></li>
+    {% else %}
+        <li><a href="{% url 'auth' %}">Login</a></li>
+    {% endif %}
+</ul>
+        <div class="nav-icons" style="display: flex; align-items: center;">
+            <a href="#" class="active cart-link">
+                🛒 <span class="global-badge">{{ cart_count|default:0 }}</span>
+            </a>
+            <button id="theme-toggle" class="theme-toggle">🌙</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Content remains same -->
+        <h1 class="page-title">Shopping Cart</h1>
+
+        <div class="cart-layout reveal-on-scroll">
+            <div class="cart-items">
+                {% for item in cart.items.all %}
+                <div class="cart-item">
+                    {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                    {% else %}
+                        <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
+                    {% endif %}
+                    
+                    <div class="item-details">
+                        <h3>{{ item.product.name }}</h3>
+                        <p class="item-meta">Category: {{ item.product.category.name }}</p>
+                        <p class="item-price">${{ item.product.price }}</p>
+                    </div>
+                    <div class="item-quantity">
+                        <input type="number" value="{{ item.quantity }}" readonly>
+                    </div>
+                    <a href="{% url 'remove_from_cart' item.id %}" class="remove-btn">×</a>
+                </div>
+                {% empty %}
+                <p>Your cart is empty. <a href="{% url 'pro_list' %}" style="text-decoration: none; color: palevioletred;">Start Shopping</a>.</p>
+                {% endfor %}
+            </div>
+
+            {% if cart.items.all %}
+            <aside class="cart-summary">
+                <h2>Order Summary</h2>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>${{ cart.get_total }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span>Free</span>
+                </div>
+                <hr>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>${{ cart.get_total }}</span>
+                </div>
+                
+                <a href="{% url 'checkout' %}" style="text-decoration:none;">
+                    <button class="checkout-btn">Proceed to Checkout</button>
+                </a>
+            </aside>
+            {% endif %}
+        </div>
+    </main>
+    
+    <!-- Footer added for completeness -->
+    <footer class="site-footer reveal-on-scroll" style="margin-top:50px;">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h2 class="footer-logo">Stylehub™</h2>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <div class="social-icons">
+                    <a href="#">📷</a>
+                    <a href="#">fb</a>
+                    <a href="#">✕</a>
+                    <a href="#">▶</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Extra links</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="{% url 'pro_list' %}">Shop</a></li>
+                    <li><a href="{% url 'new' %}">New Arrivals</a></li>
+                    <li><a href="{% url 'contact' %}">Our Team</a></li> <!-- Fixed Link -->
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact</h3>
+                <p>123 Fashion Street<br>Mumbai, MH 400001</p>
+                <p><a href="mailto:email@stylehub.com">email@stylehub.com</a></p>
+                <p>(+91) 98765 43210</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

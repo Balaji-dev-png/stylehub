@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed | Stylehub</title>
+    <link rel="stylesheet" href="{% static 'style7.css' %}">
+    <link rel="stylesheet" href="{% static 'theme.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <main class="success-container">
+        <div class="success-card">
+            <div class="check-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            
+            <h1>Order Confirmed!</h1>
+            <p class="thanks-msg">Thank you for shopping with <strong>Stylehub</strong>. Your order has been placed successfully.</p>
+            
+            <div class="order-box">
+                <div class="order-detail">
+                    <span>Order Number:</span>
+                    <strong>#{{ order.id }}</strong>
+                </div>
+                <div class="order-detail">
+                    <span>Date:</span>
+                    <strong>{{ order.created_at|date:"M d, Y" }}</strong>
+                </div>
+                 <div class="order-detail">
+                    <span>Total:</span>
+                    <strong>${{ order.total_price }}</strong>
+                </div>
+            </div>
+
+            <p class="email-notice">A confirmation email has been sent to <strong>{{ order.email }}</strong>.</p>
+
+            <div class="actions">
+                <a href="{% url 'home' %}" class="btn-primary">Continue Shopping</a>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

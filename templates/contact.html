@@ -1,0 +1,158 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Stylehub</title>
+    <link rel="stylesheet" href="{% static 'theme.css' %}">
+    <link rel="stylesheet" href="{% static 'style9.css' %}">
+    <script src="{% static 'main.js' %}" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+
+    {% if messages %}
+        <div class="toast-container">
+            {% for message in messages %}
+                <div class="toast {% if message.tags == 'success' %}toast-success{% else %}toast-error{% endif %}">
+                    <span>{{ message }}</span>
+                    <span class="toast-close" onclick="this.parentElement.style.display='none';">&times;</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+   
+
+    <nav class="navbar">
+        <div class="logo">Style<span>hub</span></div>
+        <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'pro_list' %}">Shop</a></li>
+    <li><a href="{% url 'new' %}">New Arrivals</a></li>
+    <li><a href="{% url 'contact' %}">Contact</a></li>
+    
+    {% if user.is_authenticated %}
+        <!-- LOGOUT REMOVED, PROFILE ADDED -->
+        <li><a href="{% url 'profile' %}">Profile</a></li>
+    {% else %}
+        <li><a href="{% url 'auth' %}">Login</a></li>
+    {% endif %}
+</ul>
+        <div class="nav-icons" style="display: flex; align-items: center;">
+            <a href="{% url 'cart' %}" class="cart-link">
+                🛒 <span class="global-badge">{{ cart_count|default:0 }}</span>
+            </a>
+            <button id="theme-toggle" class="theme-toggle">🌙</button>
+        </div>
+    </nav>
+
+    <main class="contact-container">
+        <div class="contact-header reveal-on-scroll">
+            <h1>Get In Touch</h1>
+            <p>Have a question about an order or a specific product? We're here to help.</p>
+        </div>
+
+        <div class="contact-wrapper reveal-on-scroll">
+            <div class="contact-info">
+                <div class="info-item">
+                    <h3>Visit Us</h3>
+                    <p>123 Fashion Street, Design District<br>Mumbai, MH 400001</p>
+                </div>
+                <div class="info-item">
+                    <h3>Email Us</h3>
+                    <p>support@stylehub.com<br>info@stylehub.com</p>
+                </div>
+                <div class="info-item">
+                    <h3>Call Us</h3>
+                    <p>+91 98765 43210<br>Mon-Sat, 9:00 AM - 6:00 PM</p>
+                </div>
+                <div class="social-links">
+                    <a href="#">Fb</a>
+                    <a href="#">Ig</a>
+                    <a href="#">X</a>
+                </div>
+            </div>
+
+            <div class="contact-form">
+                <form action="{% url 'contact_submit' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>Full Name</label>
+                            <input type="text" name="full_name" placeholder="John Doe" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Email Address</label>
+                            <input type="email" name="email" placeholder="john@example.com" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Subject</label>
+                        <select name="subject">
+                            <option value="Order Status">Order Status</option>
+                            <option value="Return & Refund">Return & Refund</option>
+                            <option value="Product Inquiry">Product Inquiry</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Message</label>
+                        <textarea name="message" rows="5" placeholder="How can we help you?" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer reveal-on-scroll">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h2 class="footer-logo">Stylehub™</h2>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <div class="social-icons">
+                    <a href="#">📷</a>
+                    <a href="#">fb</a>
+                    <a href="#">✕</a>
+                    <a href="#">▶</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Extra links</h3>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'pro_list' %}">Shop</a></li>
+                    <li><a href="{% url 'new' %}">New Arrivals</a></li>
+                    <li><a href="{% url 'contact' %}">Our Team</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact</h3>
+                <p>123 Fashion Street<br>Mumbai, MH 400001</p>
+                <p><a href="mailto:email@stylehub.com">email@stylehub.com</a></p>
+                <p>(+91) 98765 43210</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toasts = document.querySelectorAll('.toast');
+        toasts.forEach(toast => {
+            setTimeout(() => {
+                toast.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+                toast.style.opacity = "0";
+                toast.style.transform = "translateX(100%)";
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        });
+    });
+</script>
+
+</body>
+</html>

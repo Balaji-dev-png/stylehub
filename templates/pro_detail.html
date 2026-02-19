@@ -1,0 +1,141 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} | Stylehub</title>
+    <link rel="stylesheet" href="{% static 'theme.css' %}">
+    <link rel="stylesheet" href="{% static 'style3.css' %}">
+    <script src="{% static 'main.js' %}" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- EXACT SAME HEADER AS HOME PAGE -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">Style<span>hub</span></div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'pro_list' %}">Shop</a></li>
+                <li><a href="{% url 'new' %}">New Arrivals</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+                
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'my_orders' %}">My Orders</a></li>
+                    
+                {% else %}
+                    <li><a href="{% url 'auth' %}">Login</a></li>
+                {% endif %}
+            </ul>
+            <div class="nav-icons" style="display: flex; align-items: center;">
+                <form action="{% url 'search_result' %}" method="GET" class="search-form">
+                    <input type="text" name="q" class="search-input" placeholder="Search..." required>
+                    <button type="submit" class="search-btn">🔍</button>
+                </form>
+                <a href="{% url 'cart' %}" class="cart-link">
+                    🛒 <span class="global-badge">{{ cart_count|default:0 }}</span>
+                </a>
+                <button id="theme-toggle" class="theme-toggle">🌙</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="product-container reveal-on-scroll">
+        <div class="image-gallery">
+            <div class="main-image-wrapper">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" id="featured">
+                {% else %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" id="featured">
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="product-details">
+            <div class="top-nav">
+                <a href="{% url 'pro_list' %}" class="back-link">←</a>
+                <span class="breadcrumb">Home • {{ product.category.name }} • {{ product.name }}</span>
+            </div>
+
+            <span class="category-pill">{{ product.category.name }}</span>
+
+            <h1>{{ product.name }}</h1>
+            <p class="price">${{ product.price }}</p>
+
+            <div class="timer-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <p>Order in <span>02:30:25</span> to get next day delivery</p>
+            </div>
+
+            <p class="option-label">Select Size</p>
+            <div class="size-options">
+                <button>S</button>
+                <button class="selected">M</button>
+                <button>L</button>
+                <button>XL</button>
+                <button>XXL</button>
+            </div>
+
+            <div class="action-buttons">
+                <a href="{% url 'add_to_cart' product.id %}" class="ajax-add-to-cart" style="flex:1; text-decoration: none;">
+                    <button class="add-to-cart-btn" id="add-to-cart-main">Add to Cart</button>
+                </a>
+                
+                <!-- FUNCTIONAL WISHLIST BUTTON -->
+                {% if user.is_authenticated %}
+                    <a href="{% url 'toggle_wishlist' product.id %}" class="wishlist-btn {% if in_wishlist %}active{% endif %}" title="Toggle Wishlist">
+                        {% if in_wishlist %}❤️{% else %}♡{% endif %}
+                    </a>
+                {% else %}
+                    <a href="{% url 'auth' %}" class="wishlist-btn" title="Login to save">♡</a>
+                {% endif %}
+            </div>
+
+            <div class="info-card">
+                <div class="info-header">
+                    <span>Description</span>
+                    <span>^</span>
+                </div>
+                <div class="info-content">
+                    {{ product.description }}
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- EXACT SAME FOOTER AS HOME PAGE -->
+    <footer class="site-footer reveal-on-scroll">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h2 class="footer-logo">Stylehub™</h2>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <div class="social-icons">
+                    <a href="#">📷</a>
+                    <a href="#">fb</a>
+                    <a href="#">✕</a>
+                    <a href="#">▶</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Extra links</h3>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'pro_list' %}">Shop</a></li>
+                    <li><a href="{% url 'new' %}">New Arrivals</a></li>
+                    <li><a href="{% url 'contact' %}">Our Team</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact</h3>
+                <p>123 Fashion Street<br>Mumbai, MH 400001</p>
+                <p><a href="mailto:email@stylehub.com">email@stylehub.com</a></p>
+                <p>(+91) 98765 43210</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

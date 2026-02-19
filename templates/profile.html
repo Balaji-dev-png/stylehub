@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Stylehub</title>
+    <link rel="stylesheet" href="{% static 'theme.css' %}">
+    <link rel="stylesheet" href="{% static 'style11.css' %}">
+    <script src="{% static 'main.js' %}" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Standard Navbar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">Style<span>hub</span></div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'pro_list' %}">Shop</a></li>
+                <li><a href="{% url 'new' %}">New Arrivals</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+                <li><a href="{% url 'profile' %}" class="active">Profile</a></li>
+            </ul>
+            <div class="nav-icons" style="display: flex; align-items: center;">
+                <form action="{% url 'search_result' %}" method="GET" class="search-form">
+                    <input type="text" name="q" class="search-input" placeholder="Search..." required>
+                    <button type="submit" class="search-btn">🔍</button>
+                </form>
+                <a href="{% url 'cart' %}" class="cart-link">
+                    🛒 <span class="global-badge">{{ cart_count|default:0 }}</span>
+                </a>
+                <button id="theme-toggle" class="theme-toggle">🌙</button>
+            </div>
+        </nav>
+    </header>
+
+    {% if messages %}
+        <div class="toast-container" style="position:fixed; bottom:20px; right:20px; z-index:9999;">
+            {% for message in messages %}
+                <div style="background:#4caf50; color:white; padding:15px; border-radius:5px; margin-top:10px; box-shadow:0 5px 15px rgba(0,0,0,0.2);">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        <script>
+            setTimeout(function(){
+                document.querySelector('.toast-container').style.display = 'none';
+            }, 3000);
+        </script>
+    {% endif %}
+
+    <main class="profile-container reveal-on-scroll">
+        <!-- Sidebar -->
+        <aside class="profile-sidebar">
+            <div class="user-info">
+                <div class="avatar">{{ user.username|make_list|first }}</div>
+                <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+                <p>@{{ user.username }}</p>
+                <p style="margin-top:5px; font-size:12px; opacity:0.7;">Joined: {{ user.date_joined|date:"M Y" }}</p>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="#" class="active" onclick="return false;">👤 Account Details</a>
+                <a href="{% url 'my_orders' %}">📦 My Orders</a>
+                <a href="{% url 'logout' %}" class="logout">🚪 Logout</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <section class="profile-content">
+            
+            <!-- Update Profile Form -->
+            <div class="settings-card">
+                <h3>Update Shipping Address</h3>
+                <form class="settings-form" method="POST">
+                    {% csrf_token %}
+                    
+                    <h4 style="margin-bottom:15px; color:var(--text-muted); font-size:14px; text-transform:uppercase;">Personal Info</h4>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>First Name</label>
+                            <input type="text" name="first_name" value="{{ user.first_name }}">
+                        </div>
+                        <div class="input-group">
+                            <label>Last Name</label>
+                            <input type="text" name="last_name" value="{{ user.last_name }}">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>Email Address (ReadOnly)</label>
+                            <input type="email" value="{{ user.email }}" readonly style="opacity:0.7; cursor:not-allowed;">
+                        </div>
+                        <div class="input-group">
+                            <label>Phone Number</label>
+                            <input type="text" name="phone" value="{{ profile.phone|default:'' }}" placeholder="+1 234 567 8900">
+                        </div>
+                    </div>
+
+                    <h4 style="margin:20px 0 15px; color:var(--text-muted); font-size:14px; text-transform:uppercase;">Shipping Details</h4>
+                    
+                    <div class="input-group">
+                        <label>Address Line</label>
+                        <input type="text" name="address" value="{{ profile.address|default:'' }}" placeholder="123 Main St">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>City</label>
+                            <input type="text" name="city" value="{{ profile.city|default:'' }}">
+                        </div>
+                        <div class="input-group">
+                            <label>State / Province</label>
+                            <input type="text" name="state" value="{{ profile.state|default:'' }}">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label>Zip Code</label>
+                            <input type="text" name="zip_code" value="{{ profile.zip_code|default:'' }}">
+                        </div>
+                        <div class="input-group">
+                            <label>Country</label>
+                            <input type="text" name="country" value="{{ profile.country|default:'' }}">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+            </div>
+
+            <!-- Recent Orders Mini-View -->
+            <div class="content-header" style="margin-top: 40px;">
+                <h2>Recent Orders</h2>
+            </div>
+
+            <div class="order-table-container">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.created_at|date:"M d, Y" }}</td>
+                            <td><span class="status {{ order.status }}">{{ order.status }}</span></td>
+                            <td>${{ order.total_price }}</td>
+                            <td><a href="{% url 'my_orders' %}" class="view-details">View</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align:center;">No recent orders.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Standard Footer -->
+    <footer class="site-footer reveal-on-scroll">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h2 class="footer-logo">Stylehub™</h2>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <div class="social-icons">
+                    <a href="#">📷</a>
+                    <a href="#">fb</a>
+                    <a href="#">✕</a>
+                    <a href="#">▶</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Extra links</h3>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'pro_list' %}">Shop</a></li>
+                    <li><a href="{% url 'new' %}">New Arrivals</a></li>
+                    <li><a href="{% url 'contact' %}">Our Team</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact</h3>
+                <p>123 Fashion Street<br>Mumbai, MH 400001</p>
+                <p><a href="mailto:email@stylehub.com">email@stylehub.com</a></p>
+                <p>(+91) 98765 43210</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

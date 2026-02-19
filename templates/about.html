@@ -1,0 +1,206 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us | Stylehub</title>
+<link rel="stylesheet" href="{% static 'theme.css' %}">
+<link rel="stylesheet" href="{% static 'style9.css' %}"> <!-- Reusing contact layout base -->
+<script src="{% static 'main.js' %}" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+    .about-container {
+        max-width: 1100px;
+        margin: 60px auto;
+        padding: 0 20px;
+    }
+
+    .about-header {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .about-header h1 {
+        font-size: 3rem;
+        color: var(--text-main);
+        margin-bottom: 15px;
+    }
+
+    .about-header h1 span {
+        color: #ff4757;
+    }
+
+    .about-header p {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .about-content {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 50px;
+        box-shadow: var(--shadow);
+        color: var(--text-muted);
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    .about-content h2 {
+        color: var(--text-main);
+        margin-top: 40px;
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+    }
+
+    .about-content h2:first-child {
+        margin-top: 0;
+    }
+
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    .team-member {
+        text-align: center;
+        padding: 20px;
+        background: var(--input-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        transition: transform 0.3s;
+    }
+
+    .team-member:hover {
+        transform: translateY(-5px);
+    }
+
+    .team-member img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 3px solid #ff4757;
+    }
+
+    .team-member h4 {
+        color: var(--text-main);
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+    }
+
+    .team-member p {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+</style>
+
+</head>
+<body>
+
+
+<nav class="navbar">
+    <div class="logo">Style<span>hub</span></div>
+    <ul class="nav-links">
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'pro_list' %}">Shop</a></li>
+        <li><a href="{% url 'new' %}">New Arrivals</a></li>
+        <li><a href="{% url 'contact' %}">Contact</a></li>
+        
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'my_orders' %}">My Orders</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+            <li><a href="{% url 'auth' %}">Login</a></li>
+        {% endif %}
+    </ul>
+    <div class="nav-icons" style="display: flex; align-items: center;">
+        <a href="{% url 'cart' %}" class="cart-link">
+            🛒 <span class="global-badge">{{ cart_count|default:0 }}</span>
+        </a>
+        <button id="theme-toggle" class="theme-toggle">🌙</button>
+    </div>
+</nav>
+
+<main class="about-container reveal-on-scroll">
+    <div class="about-header">
+        <h1>About Style<span>hub</span></h1>
+        <p>Redefining modern fashion with elegance, comfort, and sustainability.</p>
+    </div>
+
+    <div class="about-content">
+        <h2>Our Story</h2>
+        <p>
+            Founded in 2026, Stylehub started as a small boutique with a big dream: to make premium, trend-setting fashion accessible to everyone. We believe that what you wear is an extension of who you are, which is why we meticulously curate pieces that allow you to express your true self without compromising on comfort.
+        </p>
+
+        <h2>Our Mission</h2>
+        <p>
+            Our mission is to revolutionize the e-commerce fashion industry by prioritizing sustainability, ethical sourcing, and uncompromising quality. We work closely with our manufacturers to ensure that every garment not only looks good but also does good for the planet.
+        </p>
+
+        <h2>Meet the Core Team</h2>
+        <div class="team-grid">
+            <div class="team-member">
+                <!-- <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80" alt="Jane Doe"> -->
+                <h4>Murthy</h4>
+                <p>Backend</p>
+            </div>
+            <div class="team-member">
+                <!-- <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=200&q=80" alt="John Smith"> -->
+                <h4>Aniket</h4>
+                <p>Admin</p>
+            </div>
+            <div class="team-member">
+                <!-- <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80" alt="Emily Chen"> -->
+                <h4>Sadgyan</h4>
+                <p>FrontEnd</p>
+            </div>
+            <div class="team-member">
+                <!-- <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=200&q=80" alt="Emily Chen"> -->
+                <h4>Bhanu</h4>
+                <p>Deployment</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="site-footer reveal-on-scroll">
+    <div class="footer-content">
+        <div class="footer-brand">
+            <h2 class="footer-logo">Stylehub™</h2>
+            <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+            <div class="social-icons">
+                <a href="#">📷</a>
+                <a href="#">fb</a>
+                <a href="#">✕</a>
+                <a href="#">▶</a>
+            </div>
+        </div>
+        <div class="footer-links">
+            <h3>Extra links</h3>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'pro_list' %}">Shop</a></li>
+                <li><a href="{% url 'new' %}">New Arrivals</a></li>
+                <li><a href="{% url 'contact' %}">Our Team</a></li>
+                <li><a href="{% url 'about' %}">About Us</a></li>
+            </ul>
+        </div>
+        <div class="footer-contact">
+            <h3>Contact</h3>
+            <p>123 Fashion Street<br>Mumbai, MH 400001</p>
+            <p><a href="mailto:email@stylehub.com">email@stylehub.com</a></p>
+            <p>(+91) 98765 43210</p>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
