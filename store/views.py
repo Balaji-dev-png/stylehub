@@ -8,6 +8,9 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.http import JsonResponse
 from django.db.models import Q
+import stripe
+from django.conf import settings
+from django.urls import reverse
 
 from .models import Product, Category, Cart, CartItem, Order, OrderItem, UserProfile, Wishlist
 
@@ -266,9 +269,7 @@ def checkout(request):
     profile = UserProfile.objects.filter(user=request.user).first()
     return render(request, 'checkout.html', {'cart': cart, 'profile': profile})
 
-import stripe
-from django.conf import settings
-from django.urls import reverse
+
 
 # Initialize Stripe with your secret key
 stripe.api_key = settings.STRIPE_SECRET_KEY
