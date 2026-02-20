@@ -164,6 +164,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRECT_KEY')
+
 
 
 
