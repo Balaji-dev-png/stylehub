@@ -26,17 +26,17 @@ Admins can manage products, stock, and orders from a powerful backend dashboard.
 
 ---
 
+<img width="2879" height="1384" alt="Screenshot 2026-02-20 220428" src="https://github.com/user-attachments/assets/6eb9b4ed-4375-497a-aa91-0b3e49d6bb48" />
+<img width="2879" height="1526" alt="Screenshot 2026-02-20 220448" src="https://github.com/user-attachments/assets/e4aeea9a-12e8-4c79-b169-cef9671c3698" />
+<img width="2879" height="963" alt="Screenshot 2026-02-20 220507" src="https://github.com/user-attachments/assets/aa3f010b-df24-4151-802a-23d753667613" />
+<img width="2879" height="1540" alt="Screenshot 2026-02-20 220338" src="https://github.com/user-attachments/assets/fa16aad2-046e-4cfb-b7ce-8a830fb2d808" />
+<img width="2879" height="1535" alt="Screenshot 2026-02-20 220552" src="https://github.com/user-attachments/assets/6f64e721-9c6c-47b7-b169-b3b58bdf6cef" />
+<img width="2879" height="1534" alt="Screenshot 2026-02-20 220533" src="https://github.com/user-attachments/assets/8688a47d-3cd4-4e30-a4b7-15707266f146" />
 <img width="2879" height="1533" alt="Screenshot 2026-02-20 220750" src="https://github.com/user-attachments/assets/3ae2d700-5303-4dca-a40a-5c367f41c8b8" />
 <img width="2871" height="1441" alt="Screenshot 2026-02-20 220729" src="https://github.com/user-attachments/assets/fdeb6e74-9d12-4b4b-9c57-24b4507251ad" />
 <img width="2870" height="1538" alt="Screenshot 2026-02-20 220704" src="https://github.com/user-attachments/assets/41d622ce-54f1-4155-a859-0cf4c39ccf33" />
 <img width="2879" height="1214" alt="Screenshot 2026-02-20 220643" src="https://github.com/user-attachments/assets/065c1e87-b05a-45f9-80c7-64cb0e949fd9" />
 <img width="2879" height="1508" alt="Screenshot 2026-02-20 220617" src="https://github.com/user-attachments/assets/344586f9-9422-48cc-97ed-9c6be322a92b" />
-<img width="2879" height="1535" alt="Screenshot 2026-02-20 220552" src="https://github.com/user-attachments/assets/6f64e721-9c6c-47b7-b169-b3b58bdf6cef" />
-<img width="2879" height="1534" alt="Screenshot 2026-02-20 220533" src="https://github.com/user-attachments/assets/8688a47d-3cd4-4e30-a4b7-15707266f146" />
-<img width="2879" height="963" alt="Screenshot 2026-02-20 220507" src="https://github.com/user-attachments/assets/aa3f010b-df24-4151-802a-23d753667613" />
-<img width="2879" height="1526" alt="Screenshot 2026-02-20 220448" src="https://github.com/user-attachments/assets/e4aeea9a-12e8-4c79-b169-cef9671c3698" />
-<img width="2879" height="1384" alt="Screenshot 2026-02-20 220428" src="https://github.com/user-attachments/assets/6eb9b4ed-4375-497a-aa91-0b3e49d6bb48" />
-<img width="2879" height="1540" alt="Screenshot 2026-02-20 220338" src="https://github.com/user-attachments/assets/fa16aad2-046e-4cfb-b7ce-8a830fb2d808" />
 
 
 
