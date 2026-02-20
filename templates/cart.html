@@ -22,7 +22,6 @@
     <li><a href="{% url 'contact' %}">Contact</a></li>
     
     {% if user.is_authenticated %}
-        <!-- LOGOUT REMOVED, PROFILE ADDED -->
         <li><a href="{% url 'profile' %}">Profile</a></li>
     {% else %}
         <li><a href="{% url 'auth' %}">Login</a></li>
@@ -44,20 +43,31 @@
             <div class="cart-items">
                 {% for item in cart.items.all %}
                 <div class="cart-item">
-                    {% if item.product.image %}
-                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
-                    {% else %}
-                        <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
-                    {% endif %}
+                    <!-- Image is now clickable -->
+                    <a href="{% url 'pro_detail' item.product.slug %}">
+                        {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                        {% else %}
+                            <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
+                        {% endif %}
+                    </a>
                     
                     <div class="item-details">
-                        <h3>{{ item.product.name }}</h3>
+                        <!-- Product Title is now clickable -->
+                        <a href="{% url 'pro_detail' item.product.slug %}" style="text-decoration: none; color: inherit;">
+                            <h3>{{ item.product.name }}</h3>
+                        </a>
                         <p class="item-meta">Category: {{ item.product.category.name }}</p>
                         <p class="item-price">${{ item.product.price }}</p>
                     </div>
+                    
+                    <!-- Increase and Decrease Quantity Buttons -->
                     <div class="item-quantity">
-                        <input type="number" value="{{ item.quantity }}" readonly>
+                        <button type="button" onclick="window.location.href='{% url 'update_cart' item.id 'dec' %}'">-</button>
+                        <input type="text" value="{{ item.quantity }}" readonly>
+                        <button type="button" onclick="window.location.href='{% url 'update_cart' item.id 'inc' %}'">+</button>
                     </div>
+                    
                     <a href="{% url 'remove_from_cart' item.id %}" class="remove-btn">×</a>
                 </div>
                 {% empty %}
@@ -89,34 +99,31 @@
             {% endif %}
         </div>
     </main>
-    
-    <!-- Footer added for completeness -->
-    <footer class="site-footer reveal-on-scroll" style="margin-top:50px;">
+   <footer class="site-footer reveal-on-scroll">
         <div class="footer-content">
             <div class="footer-brand">
                 <h2 class="footer-logo">Stylehub™</h2>
                 <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
                 <div class="social-icons">
-                    <a href="#">📷</a>
-                    <a href="#">fb</a>
-                    <a href="#">✕</a>
-                    <a href="#">▶</a>
+                    <a href="https://www.instagram.com/">📷</a>
+                    <a href="https://www.facebook.com/">fb</a>
+                    <a href="https://x.com/">✕</a>
                 </div>
             </div>
             <div class="footer-links">
                 <h3>Extra links</h3>
                 <ul>
-                    <li><a href="/">Home</a></li>
+                    <li><a href="{% url 'home' %}">Home</a></li>
                     <li><a href="{% url 'pro_list' %}">Shop</a></li>
                     <li><a href="{% url 'new' %}">New Arrivals</a></li>
-                    <li><a href="{% url 'contact' %}">Our Team</a></li> <!-- Fixed Link -->
+                    <li><a href="{% url 'contact' %}">Our Team</a></li>
                     <li><a href="{% url 'about' %}">About Us</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
                 <h3>Contact</h3>
-                <p>123 Fashion Street<br>Mumbai, MH 400001</p>
-                <p><a href="mailto:email@stylehub.com">email@stylehub.com</a></p>
+                <p>LPU, Jalandhar<br>Punjab, 144411</p>
+                <p><a href="{% url 'team_emails' %}">Team Emails Directory</a></p>
                 <p>(+91) 98765 43210</p>
             </div>
         </div>

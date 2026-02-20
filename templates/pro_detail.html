@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -9,10 +10,23 @@
     <link rel="stylesheet" href="{% static 'style3.css' %}">
     <script src="{% static 'main.js' %}" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* FIX FOR DARK MODE SIZE BUTTON HOVER CACHING ISSUE */
+        [data-theme="dark"] .size-options button:hover:not(.selected) {
+            border-color: #ffffff !important;
+            color: #ffffff !important;
+        }
+        
+        /* Make sure default size buttons are visible in dark mode */
+        [data-theme="dark"] .size-options button {
+            color: #aaaaaa;
+            border-color: #444444;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- EXACT SAME HEADER AS HOME PAGE -->
     <header>
         <nav class="navbar">
             <div class="logo">Style<span>hub</span></div>
@@ -23,8 +37,7 @@
                 <li><a href="{% url 'contact' %}">Contact</a></li>
                 
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'my_orders' %}">My Orders</a></li>
-                    
+                    <li><a href="{% url 'profile' %}">Profile</a></li>
                 {% else %}
                     <li><a href="{% url 'auth' %}">Login</a></li>
                 {% endif %}
@@ -70,12 +83,12 @@
             </div>
 
             <p class="option-label">Select Size</p>
-            <div class="size-options">
-                <button>S</button>
-                <button class="selected">M</button>
-                <button>L</button>
-                <button>XL</button>
-                <button>XXL</button>
+            <div class="size-options" id="size-selector">
+                <button type="button">S</button>
+                <button type="button" class="selected">M</button>
+                <button type="button">L</button>
+                <button type="button">XL</button>
+                <button type="button">XXL</button>
             </div>
 
             <div class="action-buttons">
@@ -83,7 +96,6 @@
                     <button class="add-to-cart-btn" id="add-to-cart-main">Add to Cart</button>
                 </a>
                 
-                <!-- FUNCTIONAL WISHLIST BUTTON -->
                 {% if user.is_authenticated %}
                     <a href="{% url 'toggle_wishlist' product.id %}" class="wishlist-btn {% if in_wishlist %}active{% endif %}" title="Toggle Wishlist">
                         {% if in_wishlist %}❤️{% else %}♡{% endif %}
@@ -105,7 +117,6 @@
         </div>
     </main>
     
-    <!-- EXACT SAME FOOTER AS HOME PAGE -->
     <footer class="site-footer reveal-on-scroll">
         <div class="footer-content">
             <div class="footer-brand">
@@ -131,11 +142,26 @@
             <div class="footer-contact">
                 <h3>Contact</h3>
                 <p>123 Fashion Street<br>Mumbai, MH 400001</p>
-                <p><a href="mailto:email@stylehub.com">email@stylehub.com</a></p>
+                <p><a href="{% url 'team_emails' %}">Team Emails Directory</a></p>
                 <p>(+91) 98765 43210</p>
             </div>
         </div>
     </footer>
 
+    <!-- SCRIPT TO MAKE SIZE BUTTONS CLICKABLE -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sizeButtons = document.querySelectorAll('#size-selector button');
+            
+            sizeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove 'selected' class from all buttons
+                    sizeButtons.forEach(btn => btn.classList.remove('selected'));
+                    // Add 'selected' class to the clicked button
+                    this.classList.add('selected');
+                });
+            });
+        });
+    </script>
 </body>
 </html>

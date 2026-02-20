@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -32,14 +33,14 @@
                 <section class="form-section">
                     <h2>Shipping Address</h2>
                     <div class="form-row">
-                        <input type="text" name="first_name" placeholder="First Name" class="half" required>
-                        <input type="text" name="last_name" placeholder="Last Name" class="half" required>
+                        <input type="text" name="first_name" placeholder="First Name" class="half" value="{{ user.first_name }}" required>
+                        <input type="text" name="last_name" placeholder="Last Name" class="half" value="{{ user.last_name }}" required>
                     </div>
-                    <input type="text" name="address" placeholder="Address" required>
+                    <input type="text" name="address" placeholder="Address" value="{{ profile.address|default:'' }}" required>
                     <div class="form-row">
-                        <input type="text" name="city" placeholder="City" class="third" required>
-                        <input type="text" name="state" placeholder="State" class="third" required>
-                        <input type="text" name="zip" placeholder="ZIP code" class="third" required>
+                        <input type="text" name="city" placeholder="City" class="third" value="{{ profile.city|default:'' }}" required>
+                        <input type="text" name="state" placeholder="State" class="third" value="{{ profile.state|default:'' }}" required>
+                        <input type="text" name="zip" placeholder="ZIP code" class="third" value="{{ profile.zip_code|default:'' }}" required oninput="validateStrictNumber(this)">
                     </div>
                 </section>
 
@@ -48,10 +49,10 @@
                     <p class="subtitle">Dummy payment (Success/Fail random)</p>
                     <div class="payment-box">
                         <div class="payment-body">
-                            <input type="text" name="card_number" placeholder="Card Number (Any)" required>
+                            <input type="text" name="card_number" placeholder="Card Number (Any)" required oninput="validateStrictNumber(this)">
                             <div class="form-row">
                                 <input type="text" name="expiry" placeholder="MM/YY" class="half" required>
-                                <input type="text" name="cvv" placeholder="CVV" class="half" required>
+                                <input type="text" name="cvv" placeholder="CVV" class="half" required oninput="validateStrictNumber(this)">
                             </div>
                         </div>
                     </div>
@@ -85,5 +86,14 @@
             </aside>
         </div>
     </main>
+
+    <script>
+        function validateStrictNumber(input) {
+            if (/[^0-9]/.test(input.value)) {
+                alert("This field allows only numbers.");
+                input.value = input.value.replace(/[^0-9]/g, '');
+            }
+        }
+    </script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+
 """
 URL configuration for stylehub project.
 
@@ -15,20 +16,33 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+
+
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from store import views
-
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
+    # Custom Admin Dashboard
+    path('custom-admin/', views.admin_dashboard, name='admin_dashboard'),
+    path('custom-admin/product/add/', views.admin_add_product, name='admin_add_product'),
+    path('custom-admin/product/edit/<int:product_id>/', views.admin_edit_product, name='admin_edit_product'),
+    path('custom-admin/product/delete/<int:product_id>/', views.admin_delete_product, name='admin_delete_product'),
+    path('custom-admin/order/cancel/<int:order_id>/', views.admin_cancel_order, name='admin_cancel_order'),
+    path('custom-admin/category/add/', views.admin_add_category, name='admin_add_category'),
+    path('custom-admin/category/delete/<int:category_id>/', views.admin_delete_category, name='admin_delete_category'),
+
     # Pages
     path('', views.home, name='home'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
     path('contact/submit/', views.contact_submit, name='contact_submit'),
+    path('team-emails/', views.team_emails, name='team_emails'), # ADDED THIS LINE
     
     # Shop & Product
     path('shop/', views.product_list, name='pro_list'),
@@ -40,6 +54,7 @@ urlpatterns = [
     # Cart & Checkout
     path('cart/', views.cart_view, name='cart'),
     path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('update-cart/<int:item_id>/<str:action>/', views.update_cart, name='update_cart'),
     path('remove-from-cart/<int:item_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('checkout/', views.checkout, name='checkout'),
     path('place-order/', views.place_order, name='place_order'),
@@ -63,3 +78,6 @@ urlpatterns = [
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'), name='password_reset_complete'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

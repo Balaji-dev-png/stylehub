@@ -1,3 +1,4 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -94,7 +95,7 @@
                         </div>
                         <div class="input-group">
                             <label>Phone Number</label>
-                            <input type="text" name="phone" value="{{ profile.phone|default:'' }}" placeholder="+1 234 567 8900">
+                            <input type="text" name="phone" value="{{ profile.phone|default:'' }}" placeholder="+1 234 567 8900" oninput="validatePhone(this)">
                         </div>
                     </div>
 
@@ -119,7 +120,7 @@
                     <div class="form-row">
                         <div class="input-group">
                             <label>Zip Code</label>
-                            <input type="text" name="zip_code" value="{{ profile.zip_code|default:'' }}">
+                            <input type="text" name="zip_code" value="{{ profile.zip_code|default:'' }}" oninput="validateStrictNumber(this)">
                         </div>
                         <div class="input-group">
                             <label>Country</label>
@@ -169,16 +170,15 @@
     </main>
 
     <!-- Standard Footer -->
-    <footer class="site-footer reveal-on-scroll">
+  <footer class="site-footer reveal-on-scroll">
         <div class="footer-content">
             <div class="footer-brand">
                 <h2 class="footer-logo">Stylehub™</h2>
                 <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
                 <div class="social-icons">
-                    <a href="#">📷</a>
-                    <a href="#">fb</a>
-                    <a href="#">✕</a>
-                    <a href="#">▶</a>
+                    <a href="https://www.instagram.com/">📷</a>
+                    <a href="https://www.facebook.com/">fb</a>
+                    <a href="https://x.com/">✕</a>
                 </div>
             </div>
             <div class="footer-links">
@@ -193,12 +193,26 @@
             </div>
             <div class="footer-contact">
                 <h3>Contact</h3>
-                <p>123 Fashion Street<br>Mumbai, MH 400001</p>
-                <p><a href="mailto:email@stylehub.com">email@stylehub.com</a></p>
+                <p>LPU, Jalandhar<br>Punjab, 144411</p>
+                <p><a href="{% url 'team_emails' %}">Team Emails Directory</a></p>
                 <p>(+91) 98765 43210</p>
             </div>
         </div>
     </footer>
 
+    <script>
+        function validateStrictNumber(input) {
+            if (/[^0-9]/.test(input.value)) {
+                alert("This field allows only numbers.");
+                input.value = input.value.replace(/[^0-9]/g, '');
+            }
+        }
+        function validatePhone(input) {
+            if (/[^0-9\+\-\s]/.test(input.value)) {
+                alert("This field allows only numbers, spaces, +, and -.");
+                input.value = input.value.replace(/[^0-9\+\-\s]/g, '');
+            }
+        }
+    </script>
 </body>
 </html>

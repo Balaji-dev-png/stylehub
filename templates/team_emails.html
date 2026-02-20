@@ -1,0 +1,184 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Directory | Stylehub</title>
+    <link rel="stylesheet" href="{% static 'theme.css' %}">
+    <link rel="stylesheet" href="{% static 'style9.css' %}">
+    <script src="{% static 'main.js' %}" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .email-container {
+            max-width: 1100px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        .email-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .email-header h1 {
+            font-size: 2.5rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+        .email-header p {
+            color: var(--text-muted);
+        }
+        .email-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        .email-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .email-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff4757;
+        }
+        .avatar-circle {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+            font-size: 24px;
+            font-weight: 600;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .email-card h3 {
+            color: var(--text-main);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        .email-card p.role {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .email-card a {
+            display: inline-block;
+            background: var(--input-bg);
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 1px solid var(--border-color);
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .email-card a:hover {
+            background: #ff4757;
+            color: white;
+            border-color: #ff4757;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">Style<span>hub</span></div>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'pro_list' %}">Shop</a></li>
+            <li><a href="{% url 'new' %}">New Arrivals</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'profile' %}">Profile</a></li>
+            {% else %}
+                <li><a href="{% url 'auth' %}">Login</a></li>
+            {% endif %}
+        </ul>
+        <div class="nav-icons" style="display: flex; align-items: center;">
+            <button id="theme-toggle" class="theme-toggle">🌙</button>
+        </div>
+    </nav>
+
+    <main class="email-container reveal-on-scroll">
+        <div class="email-header">
+            <h1>Direct <span>Contacts</span></h1>
+            <p>Need to reach a specific department? Get in touch with our core team directly.</p>
+        </div>
+
+        <div class="email-grid">
+            <!-- Member 1 -->
+            <div class="email-card">
+                <div class="avatar-circle">S</div>
+                <h3>Sadgyan Ji Jaiswal</h3>
+                <p class="role">FrontEnd Developer</p>
+                <a href="mailto:Sadgyan@stylehub.com">sjijaiswal2003@gmail.com</a>
+            </div>
+            
+            <!-- Member 2 -->
+            <div class="email-card">
+                <div class="avatar-circle">M</div>
+                <h3>P.V.S Narayana Murthy</h3>
+                <p class="role">Backend Developer</p>
+                <a href="mailto:aniket@stylehub.com">Email Murthy</a>
+            </div>
+
+            <!-- Member 3 -->
+            <div class="email-card">
+                <div class="avatar-circle">B</div>
+                <h3>Bhanu</h3>
+                <p class="role">Admin</p>
+                <a href="mailto:sadgyan@stylehub.com">Email Bhanu</a>
+            </div>
+
+            <!-- Member 4 -->
+            <div class="email-card">
+                <div class="avatar-circle">A</div>
+                <h3>Aniket Dutta</h3>
+                <p class="role">Deployment</p>
+                <a href="mailto:aniket@stylehub.com">duttaaniket637@gmail.com</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer reveal-on-scroll">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h2 class="footer-logo">Stylehub™</h2>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <div class="social-icons">
+                    <a href="#">📷</a> <a href="#">fb</a> <a href="#">✕</a> <a href="#">▶</a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Extra links</h3>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'pro_list' %}">Shop</a></li>
+                    <li><a href="{% url 'new' %}">New Arrivals</a></li>
+                    <li><a href="{% url 'contact' %}">Our Team</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact</h3>
+                <p>123 Fashion Street<br>Mumbai, MH 400001</p>
+                <!-- UPDATED FOOTER LINK -->
+                <p><a href="{% url 'team_emails' %}">Team Emails Directory</a></p>
+                <p>(+91) 98765 43210</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -10,6 +10,51 @@
     <link rel="stylesheet" href="{% static 'style1.css' %}">
     <script src="{% static 'main.js' %}" defer></script> 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- EMBEDDED CSS TO FIX THE ADMIN BUTTON CACHING ISSUE -->
+    <style>
+        .floating-admin-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: #111;
+            color: #fff !important;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none !important;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            border: 2px solid #333;
+            letter-spacing: 0.5px;
+        }
+
+        .floating-admin-btn:hover {
+            transform: translateY(-5px);
+            background: #ff4757;
+            border-color: #ff4757;
+            box-shadow: 0 15px 40px rgba(255, 71, 87, 0.4);
+            color: #fff !important;
+        }
+
+        /* Dark Mode Support for the button */
+        [data-theme="dark"] .floating-admin-btn {
+            background: #fff;
+            color: #000 !important;
+            border-color: #eee;
+        }
+
+        [data-theme="dark"] .floating-admin-btn:hover {
+            background: #ff4757;
+            color: #fff !important;
+            border-color: #ff4757;
+        }
+    </style>
 </head>
 <body>
 
@@ -17,18 +62,17 @@
         <nav class="navbar">
             <div class="logo">Style<span>hub</span></div>
             <ul class="nav-links">
-    <li><a href="{% url 'home' %}">Home</a></li>
-    <li><a href="{% url 'pro_list' %}">Shop</a></li>
-    <li><a href="{% url 'new' %}">New Arrivals</a></li>
-    <li><a href="{% url 'contact' %}">Contact</a></li>
-    
-    {% if user.is_authenticated %}
-        <!-- LOGOUT REMOVED, PROFILE ADDED -->
-        <li><a href="{% url 'profile' %}">Profile</a></li>
-    {% else %}
-        <li><a href="{% url 'auth' %}">Login</a></li>
-    {% endif %}
-</ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'pro_list' %}">Shop</a></li>
+                <li><a href="{% url 'new' %}">New Arrivals</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+                
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'profile' %}">Profile</a></li>
+                {% else %}
+                    <li><a href="{% url 'auth' %}">Login</a></li>
+                {% endif %}
+            </ul>
             <div class="nav-icons" style="display: flex; align-items: center;">
                 <form action="{% url 'search_result' %}" method="GET" class="search-form">
                     <input type="text" name="q" class="search-input" placeholder="Search..." required>
@@ -86,10 +130,9 @@
                 <h2 class="footer-logo">Stylehub™</h2>
                 <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
                 <div class="social-icons">
-                    <a href="#">📷</a>
-                    <a href="#">fb</a>
-                    <a href="#">✕</a>
-                    <a href="#">▶</a>
+                    <a href="https://www.instagram.com/">📷</a>
+                    <a href="https://www.facebook.com/">fb</a>
+                    <a href="https://x.com/">✕</a>
                 </div>
             </div>
             <div class="footer-links">
@@ -104,12 +147,19 @@
             </div>
             <div class="footer-contact">
                 <h3>Contact</h3>
-                <p>123 Fashion Street<br>Mumbai, MH 400001</p>
-                <p><a href="mailto:email@stylehub.com">email@stylehub.com</a></p>
+                <p>LPU, Jalandhar<br>Punjab, 144411</p>
+        <p><a href="{% url 'team_emails' %}">Team Emails Directory</a></p>
                 <p>(+91) 98765 43210</p>
             </div>
         </div>
     </footer>
+
+    <!-- ADMIN FLOATING BUTTON -->
+    {% if user.is_authenticated and user.is_superuser %}
+        <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+            ⚙️ Admin Panel
+        </a>
+    {% endif %}
 
 </body>
 </html>

@@ -183,3 +183,53 @@ input, select, textarea {
     0% { transform: translateX(120%); opacity: 0; }
     100% { transform: translateX(0); opacity: 1; }
 }
+
+
+
+
+/* Floating Admin Dashboard Button */
+.floating-admin-btn {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    background: #111;
+    color: #fff !important;
+    padding: 15px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    border: 2px solid #333;
+}
+
+.floating-admin-btn:hover {
+    transform: translateY(-5px);
+    background: #ff4757;
+    border-color: #ff4757;
+    box-shadow: 0 15px 40px rgba(255, 71, 87, 0.4);
+}
+
+[data-theme="dark"] .floating-admin-btn {
+    background: #fff;
+    color: #000 !important;
+    border-color: #eee;
+}
+
+[data-theme="dark"] .floating-admin-btn:hover {
+    background: #ff4757;
+    color: #fff !important;
+    border-color: #ff4757;
+}
+
+
+
+
+
+
+

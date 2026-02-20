@@ -16,20 +16,18 @@
     <nav class="navbar">
         <div class="logo">Style<span>hub</span></div>
         <ul class="nav-links">
-    <li><a href="{% url 'home' %}">Home</a></li>
-    <li><a href="{% url 'pro_list' %}">Shop</a></li>
-    <li><a href="{% url 'new' %}">New Arrivals</a></li>
-    <li><a href="{% url 'contact' %}">Contact</a></li>
-    
-    {% if user.is_authenticated %}
-        <!-- LOGOUT REMOVED, PROFILE ADDED -->
-        <li><a href="{% url 'profile' %}">Profile</a></li>
-    {% else %}
-        <li><a href="{% url 'auth' %}">Login</a></li>
-    {% endif %}
-</ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'pro_list' %}" class="active">Shop</a></li>
+            <li><a href="{% url 'new' %}">New Arrivals</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+            
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'profile' %}">Profile</a></li>
+            {% else %}
+                <li><a href="{% url 'auth' %}">Login</a></li>
+            {% endif %}
+        </ul>
         <div class="nav-icons" style="display: flex; align-items: center;">
-            <!-- Added Search Form -->
             <form action="{% url 'search_result' %}" method="GET" class="search-form">
                 <input type="text" name="q" class="search-input" placeholder="Search..." required>
                 <button type="submit" class="search-btn">🔍</button>
@@ -46,25 +44,32 @@
         <aside class="sidebar reveal-on-scroll">
 
             <a href="{% url 'wishlist' %}" class="wishlist-sidebar-btn">
-        ❤️ View My Wishlist
-    </a>
+                ❤️ View My Wishlist
+            </a>
+            
             <h3>Filters</h3>
+            
             <div class="filter-group">
                 <h4>Category</h4>
-                <label><input type="checkbox" value="t-shirts" class="filter-checkbox" checked> T-Shirts</label>
-                <label><input type="checkbox" value="jeans" class="filter-checkbox" checked> Jeans</label>
-                <label><input type="checkbox" value="jackets" class="filter-checkbox" checked> Jackets</label>
-                <label><input type="checkbox" value="tops" class="filter-checkbox" checked> Tops</label>
-                <label><input type="checkbox" value="outerwear" class="filter-checkbox" checked> Outerwear</label>
-                <label><input type="checkbox" value="bottoms" class="filter-checkbox" checked> Bottoms</label>
+                <!-- DYNAMIC CATEGORIES: Automatically loads from database -->
+                {% for cat in all_categories %}
+                    <label>
+                        <input type="checkbox" value="{{ cat.slug }}" class="filter-checkbox" checked> 
+                        {{ cat.name }}
+                    </label>
+                {% empty %}
+                    <p style="font-size:12px; color:var(--text-muted);">No categories available.</p>
+                {% endfor %}
             </div>
+            
             <div class="filter-group">
-                <h4>Max Price: $<span id="price-value">500</span></h4>
-                <input type="range" id="price-range" min="0" max="500" value="500" step="10">
+                <h4>Max Price: $<span id="price-value">10000</span></h4>
+                <input type="range" id="price-range" min="0" max="10000" value="10000" step="50">
                 <div class="price-input-row">
-                    <input type="number" id="price-input" value="500" min="0" max="500">
+                    <input type="number" id="price-input" value="10000  " min="0" max="10000">
                 </div>
             </div>
+            
             <div class="filter-group">
                 <h4>Size</h4>
                 <div class="size-chips" id="size-filters">
@@ -75,7 +80,8 @@
                     <button data-size="xl">XL</button>
                 </div>
             </div>
-            <button id="reset-filters" class="view-btn" style="margin-top:10px; background:#ff4757; color:white; border:none; width:100%; padding:10px; cursor:pointer;">Reset Filters</button>
+            
+            <button id="reset-filters" class="view-btn" style="margin-top:10px; background:#ff4757; color:white; border:none; width:100%; padding:10px; cursor:pointer; border-radius: 5px; font-weight: 600;">Reset Filters</button>
         </aside>
 
         <main class="shop-content">
@@ -117,13 +123,13 @@
                                 <span class="pill-value">{{ product.category.name }}</span>
                             </div>
                         </div>
-                        <a href="{% url 'add_to_cart' product.id %}" class="ajax-add-to-cart" style="text-decoration:none;">
+                        <a href="{% url 'add_to_cart' product.id %}" class="ajax-add-to-cart" style="text-decoration:none; margin-top: auto;">
                             <button class="add-cart">Add to Cart</button>
                         </a>
                     </div>
                 </div>
                 {% empty %}
-                <p>No products found.</p>
+                <p style="grid-column: 1 / -1; text-align: center; padding: 50px; font-size: 1.2rem; color: var(--text-muted);">No products found in this category.</p>
                 {% endfor %}
             </div>
 
@@ -146,7 +152,7 @@
             <div class="footer-links">
                 <h3>Extra links</h3>
                 <ul>
-                    <li><a href="/">Home</a></li>
+                    <li><a href="{% url 'home' %}">Home</a></li>
                     <li><a href="{% url 'pro_list' %}">Shop</a></li>
                     <li><a href="{% url 'new' %}">New Arrivals</a></li>
                     <li><a href="{% url 'contact' %}">Our Team</a></li>
@@ -156,7 +162,7 @@
             <div class="footer-contact">
                 <h3>Contact</h3>
                 <p>123 Fashion Street<br>Mumbai, MH 400001</p>
-                <p><a href="mailto:email@stylehub.com">email@stylehub.com</a></p>
+                <p><a href="{% url 'team_emails' %}">Team Emails Directory</a></p>
                 <p>(+91) 98765 43210</p>
             </div>
         </div>
@@ -185,25 +191,43 @@
             function init() { filterProducts(); }
             searchCheckboxes.forEach(box => { box.addEventListener('change', () => { filterProducts(); }); });
             priceRange.addEventListener('input', function() { const val = this.value; priceInput.value = val; priceValueText.innerText = val; filterProducts(); });
-            priceInput.addEventListener('input', function() { let val = parseInt(this.value); if(val > 500) val = 500; if(val < 0) val = 0; priceRange.value = val; priceValueText.innerText = val; filterProducts(); });
+            priceInput.addEventListener('input', function() { let val = parseInt(this.value); if(val > 10000) val = 10000; if(val < 0) val = 0; priceRange.value = val; priceValueText.innerText = val; filterProducts(); });
             sizeButtons.forEach(btn => { btn.addEventListener('click', function() { sizeButtons.forEach(b => b.classList.remove('active')); this.classList.add('active'); activeSize = this.dataset.size; filterProducts(); }); });
             sortSelect.addEventListener('change', function() { sortFilteredProducts(); });
-            resetBtn.addEventListener('click', function() { searchCheckboxes.forEach(box => box.checked = true); priceRange.value = 500; priceInput.value = 500; priceValueText.innerText = 500; sizeButtons.forEach(b => b.classList.remove('active')); sizeButtons[0].classList.add('active'); activeSize = 'all'; sortSelect.value = 'default'; filterProducts(); });
+            
+            resetBtn.addEventListener('click', function() { 
+                searchCheckboxes.forEach(box => box.checked = true); 
+                priceRange.value = 10000; 
+                priceInput.value = 10000; 
+                priceValueText.innerText = 10000; 
+                sizeButtons.forEach(b => b.classList.remove('active')); 
+                sizeButtons[0].classList.add('active'); 
+                activeSize = 'all'; 
+                sortSelect.value = 'default'; 
+                filterProducts(); 
+            });
 
             function filterProducts() {
                 const activeCategories = Array.from(searchCheckboxes).filter(box => box.checked).map(box => box.value);
                 const maxPrice = parseInt(priceRange.value);
+                
                 filteredProducts = allProducts.filter(card => {
                     const category = card.dataset.category;
                     const price = parseFloat(card.dataset.price);
                     const size = card.dataset.size;
+                    
                     const categoryMatch = activeCategories.length === 0 || activeCategories.includes(category);
                     const priceMatch = price <= maxPrice;
                     let sizeMatch = true;
+                    
                     if (activeSize !== 'all') { sizeMatch = (size === activeSize) || (size === 'all'); }
+                    
                     return categoryMatch && priceMatch && sizeMatch;
                 });
-                sortFilteredProducts(false); currentPage = 1; displayProducts(); setupPagination();
+                sortFilteredProducts(false); 
+                currentPage = 1; 
+                displayProducts(); 
+                setupPagination();
             }
 
             function sortFilteredProducts(updateDisplay = true) {
@@ -226,25 +250,34 @@
                 const end = start + itemsPerPage;
                 const paginatedItems = filteredProducts.slice(start, end);
                 paginatedItems.forEach(item => { item.style.display = 'flex'; });
-                if(filteredProducts.length === 0) { showingStart.innerText = 0; showingEnd.innerText = 0; } 
-                else { showingStart.innerText = start + 1; showingEnd.innerText = Math.min(end, filteredProducts.length); }
+                
+                if(filteredProducts.length === 0) { 
+                    showingStart.innerText = 0; 
+                    showingEnd.innerText = 0; 
+                } else { 
+                    showingStart.innerText = start + 1; 
+                    showingEnd.innerText = Math.min(end, filteredProducts.length); 
+                }
             }
 
             function setupPagination() {
                 paginationContainer.innerHTML = '';
                 const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
                 if (pageCount <= 1) return;
+                
                 const prevBtn = document.createElement('button'); prevBtn.innerText = '←'; prevBtn.disabled = currentPage === 1;
-                prevBtn.onclick = () => { if(currentPage > 1) { currentPage--; displayProducts(); setupPagination(); }};
+                prevBtn.onclick = () => { if(currentPage > 1) { currentPage--; displayProducts(); setupPagination(); window.scrollTo({top: 0, behavior: 'smooth'}); }};
                 paginationContainer.appendChild(prevBtn);
+                
                 for(let i=1; i<=pageCount; i++) {
                     const btn = document.createElement('button'); btn.innerText = i;
                     if(i === currentPage) btn.classList.add('active');
-                    btn.onclick = () => { currentPage = i; displayProducts(); setupPagination(); };
+                    btn.onclick = () => { currentPage = i; displayProducts(); setupPagination(); window.scrollTo({top: 0, behavior: 'smooth'}); };
                     paginationContainer.appendChild(btn);
                 }
+                
                 const nextBtn = document.createElement('button'); nextBtn.innerText = '→'; nextBtn.disabled = currentPage === pageCount;
-                nextBtn.onclick = () => { if(currentPage < pageCount) { currentPage++; displayProducts(); setupPagination(); }};
+                nextBtn.onclick = () => { if(currentPage < pageCount) { currentPage++; displayProducts(); setupPagination(); window.scrollTo({top: 0, behavior: 'smooth'}); }};
                 paginationContainer.appendChild(nextBtn);
             }
             init();

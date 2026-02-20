@@ -31,7 +31,13 @@ class Product(models.Model):
     image = models.ImageField(upload_to='products/', blank=True, null=True) 
     image_url = models.URLField(blank=True, null=True)
     stock = models.IntegerField(default=10)
+    
+    # VISIBILITY TOGGLES
     is_available = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)      # Shows on Home Page
+    is_new_arrival = models.BooleanField(default=True)   # Shows on New Arrivals Page
+    show_in_shop = models.BooleanField(default=True)     # Shows on Shop Page
+    
     rating = models.FloatField(default=4.5)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -108,25 +114,15 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
-# --- UPDATED SIGNALS (Preventing "User has no userprofile" error) ---
-
 @receiver(post_save, sender=User)
 def manage_user_profile(sender, instance, created, **kwargs):
-    """
-    Combines creation and saving into a single signal listener for better reliability.
-    """
     if created:
         UserProfile.objects.get_or_create(user=instance)
     else:
-        # Check if profile exists before saving to prevent RelatedObjectDoesNotExist
         if hasattr(instance, 'userprofile'):
             instance.userprofile.save()
         else:
             UserProfile.objects.create(user=instance)
-
-
-
-# Add this to the bottom of your models.py
 
 class Wishlist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='wishlist')
