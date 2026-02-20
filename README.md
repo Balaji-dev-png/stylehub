@@ -1,158 +1,100 @@
-🛍️ Stylehub - Modern E-Commerce Platform
+🛍️ Stylehub — Modern E-Commerce Platform
 
-![alt text](https://img.shields.io/badge/Style-Hub-ff4757?style=for-the-badge&logo=django&logoColor=white)
-
-
-![alt text](https://img.shields.io/badge/Python-3.8+-blue?style=flat-square&logo=python&logoColor=white)
-
-
-![alt text](https://img.shields.io/badge/Django-4.x-green?style=flat-square&logo=django)
-
-
-![alt text](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
-
-
-![alt text](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
-
-
-![alt text](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-
-Stylehub is a fully-featured, responsive, and dynamic e-commerce web application built using the Django framework. It provides a seamless shopping experience for users with a modern UI, Dark/Light mode, and a powerful custom admin dashboard for store management.
+Stylehub is a high-performance, responsive e-commerce solution built with Django. It bridges the gap between a sleek consumer experience and a powerful, data-driven management suite. Featuring dynamic theme toggling, advanced JS filtering, and a bespoke administrative portal.
 ✨ Key Features
 🛒 Customer Experience
 
-    Modern UI/UX: Responsive design that works flawlessly on desktop, tablet, and mobile devices.
+    🌓 Adaptive Theming: Native Dark/Light mode support with persistent user preferences.
 
-    🌙 Dark/Light Mode: Seamless theme toggling that saves user preference.
+    ⚡ Dynamic Discovery: JavaScript-powered filtering by price, size, and category with zero page reloads.
 
-    Product Discovery: Advanced JavaScript-based filtering (by category, price, size) and sorting (price low/high, newest) without page reloads.
+    📦 Order Lifecycle: Full checkout simulation, real-time order tracking, and automated email notifications.
 
-    Dedicated Sections: Segmented views for "Featured" (Home), "New Arrivals", and "Main Shop".
+    ❤️ Wishlist & Cart: Persistent storage for user favorites and a seamless multi-item checkout flow.
 
-    User Accounts: Secure Login, Signup, and Password Reset (via Email).
+⚙️ Custom Admin Dashboard (/custom-admin/)
 
-    Profile Management: Users can update shipping addresses, contact info, and view recent orders.
+    📊 Business Intelligence: Real-time metrics for total revenue, order volume, and product inventory.
 
-    Shopping Cart & Wishlist: Add/remove items, update quantities, and save favorite products for later.
+    🚀 Bulk Operations: Quickly categorize inventory with comma-separated tag inputs.
 
-    Order Management: Checkout simulation, view order history, and the ability to cancel pending orders (with automated email notifications).
-
-    Live Search: Search bar to quickly find products by name or description.
-
-⚙️ Custom Admin Dashboard
-
-    Secure Access: Only superusers can access the custom /custom-admin/ portal.
-
-    Quick Add Categories: Add multiple categories at once using comma-separated values (e.g., MenWear, WomenWear, KidsWear).
-
-    Product Management: Full CRUD (Create, Read, Update, Delete) for products.
-
-    Visibility Toggles: Control exactly where products show up using checkboxes (Featured on Home, Show in Shop, Show in New Arrivals).
-
-    Order Tracking: View all customer orders, total revenue, total products, and cancel orders on behalf of the store.
+    🎯 Visibility Control: One-click toggles to feature products on the Homepage, New Arrivals, or the Main Shop.
 
 🛠️ Tech Stack
 
-    Backend: Python, Django
+    Backend: Python 3.11+, Django 4.x
 
-    Frontend: HTML5, CSS3 (Modular structure with CSS Variables), Vanilla JavaScript
+    Database: PostgreSQL (Production), SQLite (Development/CI)
 
-    Database: SQLite (default) / PostgreSQL (production-ready)
+    Frontend: HTML5, CSS3 (Modular CSS Variables), Vanilla JavaScript
 
-    Authentication: Django Built-in Auth System
+    Auth & Security: Django Identity & GitHub Actions CI/CD
 
-    Email Service: Django SMTP integration (for password resets and order confirmations)
+    Communications: SMTP Integration for transactional emails
 
 🚀 Installation & Setup
-
-Follow these steps to get the project running locally on your machine.
-1. Clone the repository
-code Bash
+1. Clone & Environment
+Bash
 
 git clone https://github.com/yourusername/stylehub.git
 cd stylehub
-
-2. Create and activate a virtual environment
-code Bash
-
-# Windows
 python -m venv venv
-venv\Scripts\activate
+source venv/bin/activate  # Mac/Linux
+# venv\Scripts\activate  # Windows
 
-# Mac/Linux
-python3 -m venv venv
-source venv/bin/activate
+2. Dependencies & Environment Variables
 
-3. Install dependencies
-
-(If you have a requirements.txt file)
-code Bash
+Install the core requirements:
+Bash
 
 pip install -r requirements.txt
 
-(If you don't have one, just install Django)
-code Bash
+Create a .env file in the root directory and add your credentials (do not commit this file!):
+Code snippet
 
-pip install django pillow
+DEBUG=True
+SECRET_KEY=your_secret_key
+DB_NAME=stylehub_db
+DB_USER=postgres
+DB_PASSWORD=your_password
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password
 
-4. Setup the Database
-
-Run the migrations to create the database tables.
-code Bash
+3. Database Initialization
+Bash
 
 python manage.py makemigrations
 python manage.py migrate
-
-5. Create a Superuser (Admin)
-
-You will need this account to access the custom admin dashboard.
-code Bash
-
 python manage.py createsuperuser
 
-(Follow the prompts to set your email and password)
-6. Run the Development Server
-code Bash
+4. Launch
+Bash
 
 python manage.py runserver
 
-Visit http://127.0.0.1:8000 in your browser to view the application!
-📧 Email Configuration (Important)
+📁 Project Architecture
+Plaintext
 
-For the password reset and order cancellation emails to work, you must configure your SMTP settings in settings.py.
-
-Open stylehub/settings.py and add/update the following at the bottom:
-code Python
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com' # Or your email provider
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your-email@gmail.com'
-EMAIL_HOST_PASSWORD = 'your-app-password' # Use an App Password, not your real password
-
-📁 Project Structure Highlights
-
-    models.py: Contains Category, Product, Cart, CartItem, Order, OrderItem, UserProfile, and Wishlist.
-
-    views.py: Handles all logic including catalog display, cart operations, checkout, auth, and the custom admin portal.
-
-    theme.css: Contains the global color variables for Light and Dark mode.
-
-    style1.css - style11.css: Modular stylesheets for specific pages to keep code clean and organized.
+├── core/               # Project settings & WSGI
+├── shop/               # Main application logic
+│   ├── models.py       # Product, Cart, Order, UserProfile
+│   ├── views.py        # Logic for Storefront & Custom Admin
+│   └── templates/      # Split into /shop and /admin_custom
+├── static/
+│   ├── css/            # Modular style1.css to style11.css
+│   └── js/             # Filtering & Theme logic
+└── .github/workflows/  # CI/CD Pipeline configuration
 
 👥 Core Team
 
-Built by a dedicated team of developers:
+    Sadgyan ji Jaiswal — Frontend Architect
 
-    Sadgyan ji Jaiswal - Frontend Developer
+    P.V.S Narayana Murthy — Backend Systems
 
-    P.V.S Narayana Murthy - Backend Developer
+    Bhanu Teja Sangula — Database & Admin Logic
 
-    Bhanu Teja Sangula - Admin/Database
-
-    Aniket Dutta - Deployment
+    Aniket Dutta — DevOps & Deployment
 
 📜 License
 
-This project is open-source and available under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
