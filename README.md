@@ -15,12 +15,14 @@
 <img width="2879" height="1214" alt="Screenshot 2026-02-20 220643" src="https://github.com/user-attachments/assets/065c1e87-b05a-45f9-80c7-64cb0e949fd9" />
 <img width="2879" height="1508" alt="Screenshot 2026-02-20 220617" src="https://github.com/user-attachments/assets/344586f9-9422-48cc-97ed-9c6be322a92b" />
 
+
 ## ✨ Key Features
 
 ### 🛒 Customer Experience
 
 * **🌓 Adaptive Theming:** Native Dark/Light mode support with persistent user preferences.
 * **⚡ Dynamic Discovery:** JavaScript-powered filtering by price, size, and category with zero page reloads.
+* **💳 Secure Checkout:** Fully integrated with **Stripe API** for secure, PCI-compliant payment processing.
 * **📦 Order Lifecycle:** Full checkout simulation, real-time order tracking, and automated email notifications.
 * **❤️ Wishlist & Cart:** Persistent storage for user favorites and a seamless multi-item checkout flow.
 
@@ -34,7 +36,8 @@
 
 ## 🛠️ Tech Stack
 
-* **Backend:** Python 3.11+, Django 4.x
+* **Backend:** Python 3.11+, Django 6.0+
+* **Payments:** Stripe API (Python Library)
 * **Database:** PostgreSQL (Production), SQLite (Development/CI)
 * **Frontend:** HTML5, CSS3 (Modular CSS Variables), Vanilla JavaScript
 * **Auth & Security:** Django Identity & GitHub Actions CI/CD
@@ -69,9 +72,17 @@ Create a `.env` file in the root directory and add your credentials (do not comm
 ```env
 DEBUG=True
 SECRET_KEY=your_secret_key
+
+# Database
 DB_NAME=stylehub_db
 DB_USER=postgres
 DB_PASSWORD=your_password
+
+# Stripe Keys
+STRIPE_PUBLIC_KEY=pk_test_your_public_key
+STRIPE_SECRET_KEY=sk_test_your_secret_key
+
+# Email
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASSWORD=your-app-password
 
@@ -99,13 +110,13 @@ python manage.py runserver
 
 ```text
 ├── core/               # Project settings & WSGI
-├── shop/               # Main application logic
+├── store/              # Main application logic
 │   ├── models.py       # Product, Cart, Order, UserProfile
-│   ├── views.py        # Logic for Storefront & Custom Admin
+│   ├── views.py        # Logic for Storefront, Stripe Checkout & Admin
 │   └── templates/      # Split into /shop and /admin_custom
 ├── static/
 │   ├── css/            # Modular style1.css to style11.css
-│   └── js/             # Filtering & Theme logic
+│   └── js/             # Filtering, Stripe Elements, & Theme logic
 └── .github/workflows/  # CI/CD Pipeline configuration
 
 ```
