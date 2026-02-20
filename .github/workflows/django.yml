@@ -50,6 +50,8 @@ jobs:
           DB_PORT: 5432
           # Fallback for Secret Key to prevent crash if Secret is not set in GitHub
           SECRET_KEY: ${{ secrets.SECRET_KEY || 'ci-insecure-test-key-12345' }}
+          STRIPE_PUBLIC_KEY: ${{ secrets.STRIPE_PUBLIC_KEY }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
           DEBUG: "True"
         run: |
           python manage.py test
