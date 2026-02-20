@@ -20,14 +20,11 @@ jobs:
           python-version: "3.11"
           cache: 'pip'
 
-      # 1. Start and Setup Postgres (The "No-Docker" way)
-      - name: Setup PostgreSQL
+      # Start the pre-installed Postgres service
+      - name: Start PostgreSQL
         run: |
           sudo systemctl start postgresql
-          # Use the 'postgres' superuser to create your user and database
-          sudo -u postgres psql -c "CREATE USER ${{ secrets.DB_USER }} WITH PASSWORD '${{ secrets.DB_PASSWORD }}';"
-          sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DB_NAME }} OWNER ${{ secrets.DB_USER }};"
-          sudo -u postgres psql -c "ALTER USER ${{ secrets.DB_USER }} CREATEDB;"
+          sudo systemctl status postgresql
 
       - name: Install Dependencies
         run: |
@@ -39,10 +36,9 @@ jobs:
         run: |
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
-      # 2. Run Tests using the local Postgres service
+      # Use the default 'postgres' user which exists by default on the runner
       - name: Run Tests
         env:
-          # These must match the Secrets you set in GitHub
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
