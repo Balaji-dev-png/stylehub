@@ -1,31 +1,8 @@
-# 🛒 StyleHub — Full-Stack E-Commerce Platform
+# 🛍️ Stylehub — Modern E-Commerce Platform
+
+**Stylehub** is a high-performance, responsive e-commerce solution built with Django. It bridges the gap between a sleek consumer experience and a powerful, data-driven management suite. Featuring dynamic theme toggling, advanced JS filtering, and a bespoke administrative portal.
 
 ---
-
-## 📅 Project Overview
-
-**StyleHub** is a modern **full-stack e-commerce application** developed using **Django 6.0**, **Django REST Framework**, and **PostgreSQL**.
-The project focuses on **real-world system design**, **clean architecture**, and **scalable workflows**, similar to production-level applications.
-
-The goal was not only to build features, but to understand **how a real e-commerce system works internally**.
-
----
-
-## 🧠 What is StyleHub?
-
-StyleHub is a **complete shopping platform** where users can:
-
-* Browse products
-* Add items to cart
-* Place orders
-* Track purchases
-* Manage profiles
-* Experience a premium UI with light & dark themes
-
-Admins can manage products, stock, and orders from a powerful backend dashboard.
-
----
-
 <img width="2879" height="1384" alt="Screenshot 2026-02-20 220428" src="https://github.com/user-attachments/assets/6eb9b4ed-4375-497a-aa91-0b3e49d6bb48" />
 <img width="2879" height="1526" alt="Screenshot 2026-02-20 220448" src="https://github.com/user-attachments/assets/e4aeea9a-12e8-4c79-b169-cef9671c3698" />
 <img width="2879" height="963" alt="Screenshot 2026-02-20 220507" src="https://github.com/user-attachments/assets/aa3f010b-df24-4151-802a-23d753667613" />
@@ -38,208 +15,112 @@ Admins can manage products, stock, and orders from a powerful backend dashboard.
 <img width="2879" height="1214" alt="Screenshot 2026-02-20 220643" src="https://github.com/user-attachments/assets/065c1e87-b05a-45f9-80c7-64cb0e949fd9" />
 <img width="2879" height="1508" alt="Screenshot 2026-02-20 220617" src="https://github.com/user-attachments/assets/344586f9-9422-48cc-97ed-9c6be322a92b" />
 
+## ✨ Key Features
 
+### 🛒 Customer Experience
 
-## 🚀 Core Features Implemented
+* **🌓 Adaptive Theming:** Native Dark/Light mode support with persistent user preferences.
+* **⚡ Dynamic Discovery:** JavaScript-powered filtering by price, size, and category with zero page reloads.
+* **📦 Order Lifecycle:** Full checkout simulation, real-time order tracking, and automated email notifications.
+* **❤️ Wishlist & Cart:** Persistent storage for user favorites and a seamless multi-item checkout flow.
 
-### 🎨 Modular UI Design
+### ⚙️ Custom Admin Dashboard (`/custom-admin/`)
 
-* Page-specific CSS loading
-* 11 optimized stylesheets
-* Clean, minimal, Apple-inspired layout
-* Faster load times and better maintainability
-
----
-
-### 🌓 Light & Dark Theme Support
-
-* Theme preference stored in browser
-* Automatically applied on page load
-* Instant toggle without refresh
-* Implemented using CSS variables
+* **📊 Business Intelligence:** Real-time metrics for total revenue, order volume, and product inventory.
+* **🚀 Bulk Operations:** Quickly categorize inventory with comma-separated tag inputs.
+* **🎯 Visibility Control:** One-click toggles to feature products on the Homepage, New Arrivals, or the Main Shop.
 
 ---
 
-### ⚡ Real-Time User Interactions
+## 🛠️ Tech Stack
 
-* AJAX-powered “Add to Cart”
-* No page reload during cart updates
-* Smooth slide-in notifications
-* Better user experience and responsiveness
-
----
-
-### 🔐 Secure Authentication System
-
-* Session-based authentication for users
-* Token-based authentication for APIs
-* Protected routes for orders, cart, and profile
-* Secure access control across the platform
+* **Backend:** Python 3.11+, Django 4.x
+* **Database:** PostgreSQL (Production), SQLite (Development/CI)
+* **Frontend:** HTML5, CSS3 (Modular CSS Variables), Vanilla JavaScript
+* **Auth & Security:** Django Identity & GitHub Actions CI/CD
+* **Communications:** SMTP Integration for transactional emails
 
 ---
 
-### 👤 Automated User Profile Creation
+## 🚀 Installation & Setup
 
-* User profile generated instantly on signup
-* Implemented using Django Signals
-* Eliminates manual profile handling
-* Ensures consistent user data
+### 1. Clone & Environment
 
----
+```bash
+git clone https://github.com/yourusername/stylehub.git
+cd stylehub
+python -m venv venv
+source venv/bin/activate  # Mac/Linux
+# venv\Scripts\activate  # Windows
 
-## 🧩 Core Functional Modules
+```
 
-### 🛍️ Product Management
+### 2. Dependencies & Environment Variables
 
-* Product categories
-* Product images & descriptions
-* Price and stock handling
-* Admin-controlled visibility
+Install the core requirements:
 
----
+```bash
+pip install -r requirements.txt
 
-### 🛒 Cart System
+```
 
-* Add/remove products dynamically
-* Quantity management
-* Cart persists per user
-* Seamless checkout flow
+Create a `.env` file in the root directory and add your credentials (do not commit this file!):
 
----
+```env
+DEBUG=True
+SECRET_KEY=your_secret_key
+DB_NAME=stylehub_db
+DB_USER=postgres
+DB_PASSWORD=your_password
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password
 
-### 📦 Order Management
+```
 
-* Order creation after checkout
-* Order status tracking
-* User-specific order history
-* Admin approval and cancellation
+### 3. Database Initialization
 
----
+```bash
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
 
-### 🔄 Inventory Automation
+```
 
-* Stock reduces automatically after order placement
-* Stock restores when order is cancelled
-* Prevents over-selling
-* Maintains data integrity
+### 4. Launch
 
----
+```bash
+python manage.py runserver
 
-## 🗂️ Project Architecture Explained
-
-### 🧠 Backend Configuration (stylehub/)
-
-Acts as the **brain of the project**.
-
-* Global settings and configurations
-* Secure environment-based variables
-* URL routing for all modules
-* Serializer layer for API communication
+```
 
 ---
 
-### 🏪 Store Application (store/)
+## 📁 Project Architecture
 
-Handles **all business logic**.
+```text
+├── core/               # Project settings & WSGI
+├── shop/               # Main application logic
+│   ├── models.py       # Product, Cart, Order, UserProfile
+│   ├── views.py        # Logic for Storefront & Custom Admin
+│   └── templates/      # Split into /shop and /admin_custom
+├── static/
+│   ├── css/            # Modular style1.css to style11.css
+│   └── js/             # Filtering & Theme logic
+└── .github/workflows/  # CI/CD Pipeline configuration
 
-Includes:
-
-* Product & category models
-* Cart and order logic
-* User profiles & wishlist
-* Views managing user journeys
-
----
-
-### 🖥️ Frontend Templates (templates/)
-
-* 19 structured HTML templates
-* Built using Django Template Language
-* Marketing pages, cart pages, dashboards
-* Reusable layout components
+```
 
 ---
 
-### 🎯 Static Assets (static/)
+## 👥 Core Team
 
-* Modular CSS architecture
-* JavaScript for:
-
-  * Theme switching
-  * Animations
-  * Secure background requests
-* Only required assets load per page
+* **Sadgyan ji Jaiswal** — *Frontend Architect*
+* **P.V.S Narayana Murthy** — *Backend Systems*
+* **Bhanu Teja Sangula** — *Database & Admin Logic*
+* **Aniket Dutta** — *DevOps & Deployment*
 
 ---
 
-## ⚙️ Environment & Security Design
+## 📜 License
 
-### 🔐 Environment Variables
-
-All sensitive data is stored securely using environment variables:
-
-* Database credentials
-* Secret keys
-* Debug configuration
-* Email credentials
-
-This ensures:
-
-* Security
-* Clean codebase
-* Safe deployment
-* Easy team collaboration
-
----
-
-## ✉️ Email Integration
-
-* Gmail SMTP configured
-* Ready for notifications and alerts
-* Credentials managed securely
-* Extendable for future features
-
----
-
-## 🧪 Reliability & Best Practices
-
-* Django Signals for automation
-* Clean separation of concerns
-* Defensive checks for data consistency
-* Admin-level control for safety
-
----
-
-## 🛠️ Development Philosophy
-
-* Clean & readable structure
-* Modular and scalable design
-* Production-oriented mindset
-* Real-world workflows over demo logic
-
-This project is structured like a **company-level codebase**, not a basic tutorial.
-
----
-
-## 📈 Future Enhancements
-
-* Online payment gateway
-* Order tracking system
-* Product reviews & ratings
-* Admin analytics dashboard
-* Docker & CI/CD integration
-* Mobile-ready API expansion
-
----
-
-## 🏁 Final Note
-
-**StyleHub** demonstrates a complete understanding of:
-
-* Backend development with Django
-* API design using DRF
-* Database handling with PostgreSQL
-* UI/UX structuring
-* Secure, scalable system design
-
-It is **deployment-ready** and designed with **industry standards** in mind.
+This project is licensed under the MIT License - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
