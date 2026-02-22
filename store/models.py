@@ -22,6 +22,10 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = "Categories"
 
+
+
+
+
 class Product(models.Model):
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
