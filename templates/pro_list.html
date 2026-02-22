@@ -1,7 +1,7 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script>
         // Inject theme early to prevent flash of white content
@@ -17,6 +17,7 @@
     <script src="{% static 'main.js' %}?v=3" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -26,11 +27,11 @@
             <li><a href="{% url 'pro_list' %}" class="active">Shop</a></li>
             <li><a href="{% url 'new' %}">New Arrivals</a></li>
             <li><a href="{% url 'contact' %}">Contact</a></li>
-            
+
             {% if user.is_authenticated %}
-                <li><a href="{% url 'profile' %}">Profile</a></li>
+            <li><a href="{% url 'profile' %}">Profile</a></li>
             {% else %}
-                <li><a href="{% url 'auth' %}">Login</a></li>
+            <li><a href="{% url 'auth' %}">Login</a></li>
             {% endif %}
         </ul>
         <div class="nav-icons" style="display: flex; align-items: center;">
@@ -38,36 +39,36 @@
                 <input type="text" name="q" class="search-input" placeholder="Search..." required>
                 <button type="submit" class="search-btn">🔍</button>
             </form>
-            
+
             <a href="{% url 'cart' %}" class="cart-link">
                 🛒 <span class="global-badge">{{ cart_count|default:0 }}</span>
             </a>
             <button id="theme-toggle" class="theme-toggle">🌙</button>
         </div>
     </nav>
-    
+
     <div class="container">
         <aside class="sidebar reveal-on-scroll">
 
             <a href="{% url 'wishlist' %}" class="wishlist-sidebar-btn">
                 ❤️ View My Wishlist
             </a>
-            
+
             <h3>Filters</h3>
-            
+
             <div class="filter-group">
                 <h4>Category</h4>
                 <!-- DYNAMIC CATEGORIES: Automatically loads from database -->
                 {% for cat in all_categories %}
-                    <label>
-                        <input type="checkbox" value="{{ cat.slug }}" class="filter-checkbox" checked> 
-                        {{ cat.name }}
-                    </label>
+                <label>
+                    <input type="checkbox" value="{{ cat.slug }}" class="filter-checkbox" checked>
+                    {{ cat.name }}
+                </label>
                 {% empty %}
-                    <p style="font-size:12px; color:var(--text-muted);">No categories available.</p>
+                <p style="font-size:12px; color:var(--text-muted);">No categories available.</p>
                 {% endfor %}
             </div>
-            
+
             <div class="filter-group">
                 <h4>Max Price: $<span id="price-value">10000</span></h4>
                 <input type="range" id="price-range" min="0" max="10000" value="10000" step="50">
@@ -75,7 +76,7 @@
                     <input type="number" id="price-input" value="10000  " min="0" max="10000">
                 </div>
             </div>
-            
+
             <div class="filter-group">
                 <h4>Size</h4>
                 <div class="size-chips" id="size-filters">
@@ -86,13 +87,17 @@
                     <button data-size="xl">XL</button>
                 </div>
             </div>
-            
-            <button id="reset-filters" class="view-btn" style="margin-top:10px; background:#ff4757; color:white; border:none; width:100%; padding:10px; cursor:pointer; border-radius: 5px; font-weight: 600;">Reset Filters</button>
+
+            <button id="reset-filters" class="view-btn"
+                style="margin-top:10px; background:#ff4757; color:white; border:none; width:100%; padding:10px; cursor:pointer; border-radius: 5px; font-weight: 600;">Reset
+                Filters</button>
         </aside>
 
         <main class="shop-content">
             <div class="shop-header reveal-on-scroll">
-                <p>Showing <span id="showing-start">1</span>–<span id="showing-end">{{ products|length }}</span> of <span id="total-products">{{ products|length }}</span> results</p>
+                <p>Showing <span id="showing-start">1</span>–<span id="showing-end">{{ products|length }}</span> of
+                    <span id="total-products">{{ products|length }}</span> results
+                </p>
                 <select class="sort-dropdown" id="sort-select">
                     <option value="default">Default Sorting</option>
                     <option value="low-high">Price: Low to High</option>
@@ -103,20 +108,17 @@
 
             <div class="product-grid" id="product-grid">
                 {% for product in products %}
-                <div class="product-card reveal-on-scroll" 
-                     data-category="{{ product.category.slug }}" 
-                     data-price="{{ product.price }}" 
-                     data-size="m" 
-                     data-date="{{ product.created_at|date:'Y-m-d' }}">
-                    
+                <div class="product-card reveal-on-scroll" data-category="{{ product.category.slug }}"
+                    data-price="{{ product.price }}" data-size="m" data-date="{{ product.created_at|date:'Y-m-d' }}">
+
                     <a href="{% url 'pro_detail' product.slug %}" class="product-image">
                         {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
                         {% else %}
-                            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}">
                         {% endif %}
                     </a>
-                    
+
                     <div class="card-content">
                         <div class="card-header">
                             <h3>{{ product.name }}</h3>
@@ -128,14 +130,21 @@
                                 <span class="pill-label">Category</span>
                                 <span class="pill-value">{{ product.category.name }}</span>
                             </div>
+                            <div class="info-pill">
+                                <span class="pill-label">Rating</span>
+                                <span class="pill-value">{{ product.rating|default:"4.5" }} ★</span>
+                            </div>
                         </div>
-                        <a href="{% url 'add_to_cart' product.id %}" class="ajax-add-to-cart" style="text-decoration:none; margin-top: auto;">
+                        <a href="{% url 'add_to_cart' product.id %}" class="ajax-add-to-cart"
+                            style="text-decoration:none; margin-top: auto;">
                             <button class="add-cart">Add to Cart</button>
                         </a>
                     </div>
                 </div>
                 {% empty %}
-                <p style="grid-column: 1 / -1; text-align: center; padding: 50px; font-size: 1.2rem; color: var(--text-muted);">No products found in this category.</p>
+                <p
+                    style="grid-column: 1 / -1; text-align: center; padding: 50px; font-size: 1.2rem; color: var(--text-muted);">
+                    No products found in this category.</p>
                 {% endfor %}
             </div>
 
@@ -147,12 +156,12 @@
         <div class="footer-content">
             <div class="footer-brand">
                 <h2 class="footer-logo">Stylehub™</h2>
-                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal
+                    elegance.</p>
                 <div class="social-icons">
                     <a href="#">📷</a>
                     <a href="#">fb</a>
                     <a href="#">✕</a>
-                    <a href="#">▶</a>
                 </div>
             </div>
             <div class="footer-links">
@@ -173,9 +182,9 @@
             </div>
         </div>
     </footer>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const itemsPerPage = 12;
             let currentPage = 1;
             let filteredProducts = [];
@@ -196,43 +205,43 @@
 
             function init() { filterProducts(); }
             searchCheckboxes.forEach(box => { box.addEventListener('change', () => { filterProducts(); }); });
-            priceRange.addEventListener('input', function() { const val = this.value; priceInput.value = val; priceValueText.innerText = val; filterProducts(); });
-            priceInput.addEventListener('input', function() { let val = parseInt(this.value); if(val > 10000) val = 10000; if(val < 0) val = 0; priceRange.value = val; priceValueText.innerText = val; filterProducts(); });
-            sizeButtons.forEach(btn => { btn.addEventListener('click', function() { sizeButtons.forEach(b => b.classList.remove('active')); this.classList.add('active'); activeSize = this.dataset.size; filterProducts(); }); });
-            sortSelect.addEventListener('change', function() { sortFilteredProducts(); });
-            
-            resetBtn.addEventListener('click', function() { 
-                searchCheckboxes.forEach(box => box.checked = true); 
-                priceRange.value = 10000; 
-                priceInput.value = 10000; 
-                priceValueText.innerText = 10000; 
-                sizeButtons.forEach(b => b.classList.remove('active')); 
-                sizeButtons[0].classList.add('active'); 
-                activeSize = 'all'; 
-                sortSelect.value = 'default'; 
-                filterProducts(); 
+            priceRange.addEventListener('input', function () { const val = this.value; priceInput.value = val; priceValueText.innerText = val; filterProducts(); });
+            priceInput.addEventListener('input', function () { let val = parseInt(this.value); if (val > 10000) val = 10000; if (val < 0) val = 0; priceRange.value = val; priceValueText.innerText = val; filterProducts(); });
+            sizeButtons.forEach(btn => { btn.addEventListener('click', function () { sizeButtons.forEach(b => b.classList.remove('active')); this.classList.add('active'); activeSize = this.dataset.size; filterProducts(); }); });
+            sortSelect.addEventListener('change', function () { sortFilteredProducts(); });
+
+            resetBtn.addEventListener('click', function () {
+                searchCheckboxes.forEach(box => box.checked = true);
+                priceRange.value = 10000;
+                priceInput.value = 10000;
+                priceValueText.innerText = 10000;
+                sizeButtons.forEach(b => b.classList.remove('active'));
+                sizeButtons[0].classList.add('active');
+                activeSize = 'all';
+                sortSelect.value = 'default';
+                filterProducts();
             });
 
             function filterProducts() {
                 const activeCategories = Array.from(searchCheckboxes).filter(box => box.checked).map(box => box.value);
                 const maxPrice = parseInt(priceRange.value);
-                
+
                 filteredProducts = allProducts.filter(card => {
                     const category = card.dataset.category;
                     const price = parseFloat(card.dataset.price);
                     const size = card.dataset.size;
-                    
+
                     const categoryMatch = activeCategories.length === 0 || activeCategories.includes(category);
                     const priceMatch = price <= maxPrice;
                     let sizeMatch = true;
-                    
+
                     if (activeSize !== 'all') { sizeMatch = (size === activeSize) || (size === 'all'); }
-                    
+
                     return categoryMatch && priceMatch && sizeMatch;
                 });
-                sortFilteredProducts(false); 
-                currentPage = 1; 
-                displayProducts(); 
+                sortFilteredProducts(false);
+                currentPage = 1;
+                displayProducts();
                 setupPagination();
             }
 
@@ -246,7 +255,7 @@
                     if (sortValue === 'newest') return dateB - dateA;
                     return 0;
                 });
-                if(updateDisplay) { displayProducts(); setupPagination(); }
+                if (updateDisplay) { displayProducts(); setupPagination(); }
             }
 
             function displayProducts() {
@@ -256,13 +265,13 @@
                 const end = start + itemsPerPage;
                 const paginatedItems = filteredProducts.slice(start, end);
                 paginatedItems.forEach(item => { item.style.display = 'flex'; });
-                
-                if(filteredProducts.length === 0) { 
-                    showingStart.innerText = 0; 
-                    showingEnd.innerText = 0; 
-                } else { 
-                    showingStart.innerText = start + 1; 
-                    showingEnd.innerText = Math.min(end, filteredProducts.length); 
+
+                if (filteredProducts.length === 0) {
+                    showingStart.innerText = 0;
+                    showingEnd.innerText = 0;
+                } else {
+                    showingStart.innerText = start + 1;
+                    showingEnd.innerText = Math.min(end, filteredProducts.length);
                 }
             }
 
@@ -270,20 +279,20 @@
                 paginationContainer.innerHTML = '';
                 const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
                 if (pageCount <= 1) return;
-                
+
                 const prevBtn = document.createElement('button'); prevBtn.innerText = '←'; prevBtn.disabled = currentPage === 1;
-                prevBtn.onclick = () => { if(currentPage > 1) { currentPage--; displayProducts(); setupPagination(); window.scrollTo({top: 0, behavior: 'smooth'}); }};
+                prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; displayProducts(); setupPagination(); window.scrollTo({ top: 0, behavior: 'smooth' }); } };
                 paginationContainer.appendChild(prevBtn);
-                
-                for(let i=1; i<=pageCount; i++) {
+
+                for (let i = 1; i <= pageCount; i++) {
                     const btn = document.createElement('button'); btn.innerText = i;
-                    if(i === currentPage) btn.classList.add('active');
-                    btn.onclick = () => { currentPage = i; displayProducts(); setupPagination(); window.scrollTo({top: 0, behavior: 'smooth'}); };
+                    if (i === currentPage) btn.classList.add('active');
+                    btn.onclick = () => { currentPage = i; displayProducts(); setupPagination(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
                     paginationContainer.appendChild(btn);
                 }
-                
+
                 const nextBtn = document.createElement('button'); nextBtn.innerText = '→'; nextBtn.disabled = currentPage === pageCount;
-                nextBtn.onclick = () => { if(currentPage < pageCount) { currentPage++; displayProducts(); setupPagination(); window.scrollTo({top: 0, behavior: 'smooth'}); }};
+                nextBtn.onclick = () => { if (currentPage < pageCount) { currentPage++; displayProducts(); setupPagination(); window.scrollTo({ top: 0, behavior: 'smooth' }); } };
                 paginationContainer.appendChild(nextBtn);
             }
             init();
@@ -292,9 +301,10 @@
 
     <!-- ADMIN FLOATING BUTTON -->
     {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-            ⚙️ Admin Panel
-        </a>
+    <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Admin Panel
+    </a>
     {% endif %}
 </body>
+
 </html>

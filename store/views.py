@@ -35,8 +35,8 @@ def new_arrivals(request):
 def product_list(request, category_slug=None):
     category = None
     all_categories = Category.objects.all()
-    # Only show products with show_in_shop=True
-    products = Product.objects.filter(is_available=True, show_in_shop=True).order_by('-created_at')
+    # Adding select_related ensures category data is available to the template
+    products = Product.objects.filter(is_available=True, show_in_shop=True).select_related('category').order_by('-created_at')
     
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)

@@ -1,7 +1,7 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script>
         // Inject theme early to prevent flash of white content
@@ -15,15 +15,16 @@
     <link rel="stylesheet" href="{% static 'theme.css' %}?v=3">
     <link rel="stylesheet" href="{% static 'style3.css' %}">
     <script src="{% static 'main.js' %}?v=3" defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <style>
         /* FIX FOR DARK MODE SIZE BUTTON HOVER CACHING ISSUE */
         [data-theme="dark"] .size-options button:hover:not(.selected) {
             border-color: #ffffff !important;
             color: #ffffff !important;
         }
-        
+
         /* Make sure default size buttons are visible in dark mode */
         [data-theme="dark"] .size-options button {
             color: #aaaaaa;
@@ -31,6 +32,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <header>
@@ -41,11 +43,11 @@
                 <li><a href="{% url 'pro_list' %}">Shop</a></li>
                 <li><a href="{% url 'new' %}">New Arrivals</a></li>
                 <li><a href="{% url 'contact' %}">Contact</a></li>
-                
+
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'profile' %}">Profile</a></li>
+                <li><a href="{% url 'profile' %}">Profile</a></li>
                 {% else %}
-                    <li><a href="{% url 'auth' %}">Login</a></li>
+                <li><a href="{% url 'auth' %}">Login</a></li>
                 {% endif %}
             </ul>
             <div class="nav-icons" style="display: flex; align-items: center;">
@@ -65,9 +67,9 @@
         <div class="image-gallery">
             <div class="main-image-wrapper">
                 {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" id="featured">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" id="featured">
                 {% else %}
-                    <img src="{{ product.image_url }}" alt="{{ product.name }}" id="featured">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" id="featured">
                 {% endif %}
             </div>
         </div>
@@ -84,7 +86,10 @@
             <p class="price">${{ product.price }}</p>
 
             <div class="timer-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
                 <p>Order in <span>02:30:25</span> to get next day delivery</p>
             </div>
 
@@ -98,16 +103,18 @@
             </div>
 
             <div class="action-buttons">
-                <a href="{% url 'add_to_cart' product.id %}" class="ajax-add-to-cart" style="flex:1; text-decoration: none;">
+                <a href="{% url 'add_to_cart' product.id %}" class="ajax-add-to-cart"
+                    style="flex:1; text-decoration: none;">
                     <button class="add-to-cart-btn" id="add-to-cart-main">Add to Cart</button>
                 </a>
-                
+
                 {% if user.is_authenticated %}
-                    <a href="{% url 'toggle_wishlist' product.id %}" class="wishlist-btn {% if in_wishlist %}active{% endif %}" title="Toggle Wishlist">
-                        {% if in_wishlist %}❤️{% else %}♡{% endif %}
-                    </a>
+                <a href="{% url 'toggle_wishlist' product.id %}"
+                    class="wishlist-btn {% if in_wishlist %}active{% endif %}" title="Toggle Wishlist">
+                    {% if in_wishlist %}❤️{% else %}♡{% endif %}
+                </a>
                 {% else %}
-                    <a href="{% url 'auth' %}" class="wishlist-btn" title="Login to save">♡</a>
+                <a href="{% url 'auth' %}" class="wishlist-btn" title="Login to save">♡</a>
                 {% endif %}
             </div>
 
@@ -122,17 +129,17 @@
             </div>
         </div>
     </main>
-    
+
     <footer class="site-footer reveal-on-scroll">
         <div class="footer-content">
             <div class="footer-brand">
                 <h2 class="footer-logo">Stylehub™</h2>
-                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal
+                    elegance.</p>
                 <div class="social-icons">
                     <a href="#">📷</a>
                     <a href="#">fb</a>
                     <a href="#">✕</a>
-                    <a href="#">▶</a>
                 </div>
             </div>
             <div class="footer-links">
@@ -156,11 +163,11 @@
 
     <!-- SCRIPT TO MAKE SIZE BUTTONS CLICKABLE -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const sizeButtons = document.querySelectorAll('#size-selector button');
-            
+
             sizeButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     // Remove 'selected' class from all buttons
                     sizeButtons.forEach(btn => btn.classList.remove('selected'));
                     // Add 'selected' class to the clicked button
@@ -172,9 +179,10 @@
 
     <!-- ADMIN FLOATING BUTTON -->
     {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-            ⚙️ Admin Panel
-        </a>
+    <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Admin Panel
+    </a>
     {% endif %}
 </body>
+
 </html>

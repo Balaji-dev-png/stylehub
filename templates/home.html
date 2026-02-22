@@ -12,9 +12,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stylehub | Modern Fashion Store</title>
-    <link rel="stylesheet" href="{% static 'theme.css' %}?v=3">
-    <link rel="stylesheet" href="{% static 'style1.css' %}?v=3">
-    <script src="{% static 'main.js' %}?v=3" defer></script>
+    <link rel="stylesheet" href="{% static 'theme.css' %}?v=5">
+    <link rel="stylesheet" href="{% static 'style1.css' %}?v=5">
+    <script src="{% static 'main.js' %}?v=5" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <!-- EMBEDDED CSS TO FIX THE ADMIN BUTTON CACHING ISSUE -->
@@ -119,14 +119,19 @@
                     </div>
                     <p class="card-desc">{{ product.description|truncatewords:8 }}</p>
                     <div class="info-pills">
-                        <div class="info-pill"><span class="pill-label">Category</span><span class="pill-value">{{ product.category.name  }}</span></div>
-                        <div class="info-pill"><span class="pill-label">Rating</span><span class="pill-value">{{ product.rating  }} ★</span></div>
+                        <div class="info-pill">
+                            <span class="pill-label">Category</span>
+                            <span class="pill-value">{{ product.category.name }}</span>
+                        </div>
+                        <div class="info-pill">
+                            <span class="pill-label">Rating</span>
+                            <span class="pill-value">{{ product.rating|default:"4.5" }} ★</span>
+                        </div>
                     </div>
-                    <a href="{% url 'add_to_cart' product.id %}" class="ajax-add-to-cart"
-                        style="text-decoration: none;">
-                        <button class="add-cart">Add to Cart</button>
-                    </a>
                 </div>
+                <a href="{% url 'add_to_cart' product.id %}" class="ajax-add-to-cart" style="text-decoration: none;">
+                    <button class="add-cart">Add to Cart</button>
+                </a>
             </div>
             {% empty %}
             <p>No featured products available.</p>

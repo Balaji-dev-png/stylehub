@@ -1,7 +1,7 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script>
         // Inject theme early to prevent flash of white content
@@ -22,23 +22,28 @@
             margin: 60px auto;
             padding: 0 20px;
         }
+
         .email-header {
             text-align: center;
             margin-bottom: 50px;
         }
+
         .email-header h1 {
             font-size: 2.5rem;
             color: var(--text-main);
             margin-bottom: 10px;
         }
+
         .email-header p {
             color: var(--text-muted);
         }
+
         .email-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 30px;
         }
+
         .email-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -48,10 +53,12 @@
             box-shadow: var(--shadow);
             transition: transform 0.3s ease, border-color 0.3s ease;
         }
+
         .email-card:hover {
             transform: translateY(-5px);
             border-color: #ff4757;
         }
+
         .avatar-circle {
             width: 70px;
             height: 70px;
@@ -65,11 +72,13 @@
             justify-content: center;
             margin: 0 auto 20px;
         }
+
         .email-card h3 {
             color: var(--text-main);
             font-size: 1.2rem;
             margin-bottom: 5px;
         }
+
         .email-card p.role {
             color: var(--text-muted);
             font-size: 13px;
@@ -78,6 +87,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+
         .email-card a {
             display: inline-block;
             background: var(--input-bg);
@@ -89,6 +99,7 @@
             font-size: 14px;
             transition: 0.3s;
         }
+
         .email-card a:hover {
             background: #ff4757;
             color: white;
@@ -96,6 +107,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -106,9 +118,9 @@
             <li><a href="{% url 'new' %}">New Arrivals</a></li>
             <li><a href="{% url 'contact' %}">Contact</a></li>
             {% if user.is_authenticated %}
-                <li><a href="{% url 'profile' %}">Profile</a></li>
+            <li><a href="{% url 'profile' %}">Profile</a></li>
             {% else %}
-                <li><a href="{% url 'auth' %}">Login</a></li>
+            <li><a href="{% url 'auth' %}">Login</a></li>
             {% endif %}
         </ul>
         <div class="nav-icons" style="display: flex; align-items: center;">
@@ -130,7 +142,7 @@
                 <p class="role">FrontEnd Developer</p>
                 <a href="mailto:Sadgyan@stylehub.com">sjijaiswal2003@gmail.com</a>
             </div>
-            
+
             <!-- Member 2 -->
             <div class="email-card">
                 <div class="avatar-circle">M</div>
@@ -161,9 +173,10 @@
         <div class="footer-content">
             <div class="footer-brand">
                 <h2 class="footer-logo">Stylehub™</h2>
-                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal
+                    elegance.</p>
                 <div class="social-icons">
-                    <a href="#">📷</a> <a href="#">fb</a> <a href="#">✕</a> <a href="#">▶</a>
+                    <a href="#">📷</a> <a href="#">fb</a> <a href="#">✕</a>
                 </div>
             </div>
             <div class="footer-links">
@@ -189,9 +202,10 @@
 
     <!-- ADMIN FLOATING BUTTON -->
     {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-            ⚙️ Admin Panel
-        </a>
+    <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Admin Panel
+    </a>
     {% endif %}
 </body>
+
 </html>
