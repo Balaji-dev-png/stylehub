@@ -20,7 +20,8 @@
 
 ### 🛒 Customer Experience
 
-* **🌓 Adaptive Theming:** Native Dark/Light mode support with persistent user preferences.
+* **🌓 Adaptive Theming:** Native Dark/Light mode support with persistent user preferences and dynamic background transitions.
+* **✨ Modern UI & Animations:** Fluid SPA-like page navigation transitions, grayscale-to-color bloom hover effects, and elegant pop-and-reveal overlays for product cards.
 * **⚡ Dynamic Discovery:** JavaScript-powered filtering by price, size, and category with zero page reloads.
 * **💳 Secure Checkout:** Fully integrated with **Stripe API** for secure, PCI-compliant payment processing.
 * **📦 Order Lifecycle:** Full checkout simulation, real-time order tracking, and automated email notifications.
