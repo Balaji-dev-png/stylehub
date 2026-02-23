@@ -233,6 +233,23 @@ def admin_cancel_order(request, order_id):
     return redirect('admin_dashboard')
 
 
+@user_passes_test(is_admin, login_url='home')
+def admin_update_order_status(request, order_id):
+    if request.method == 'POST':
+        order = get_object_or_404(Order, id=order_id)
+        new_status = request.POST.get('status')
+        valid_statuses = dict(Order.STATUS_CHOICES).keys()
+        
+        if new_status in valid_statuses:
+            order.status = new_status
+            order.save()
+            messages.success(request, f'Order #{order.id} status updated to {new_status}.')
+        else:
+            messages.error(request, 'Invalid status.')
+            
+    return redirect('admin_dashboard')
+
+
 
 
 
@@ -663,3 +680,8 @@ def about(request):
 
 def team_emails(request):
     return render(request, 'team_emails.html')
+
+
+
+def page_not_found(request, exception=None):
+    return render(request, '404.html')

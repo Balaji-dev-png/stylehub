@@ -20,13 +20,24 @@ Including another URLconf
 
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from store import views
+from rest_framework.routers import DefaultRouter
+from api.views import ProductViewSet, OrderViewSet, CategoryViewSet
+
+
+router = DefaultRouter()
+router.register(r'products', ProductViewSet)
+router.register(r'orders', OrderViewSet)
+router.register(r'categories', CategoryViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include(router.urls)),
+    path('404/', views.page_not_found, name='page_not_found'),
     
     # Custom Admin Dashboard
     path('custom-admin/', views.admin_dashboard, name='admin_dashboard'),
@@ -34,6 +45,7 @@ urlpatterns = [
     path('custom-admin/product/edit/<int:product_id>/', views.admin_edit_product, name='admin_edit_product'),
     path('custom-admin/product/delete/<int:product_id>/', views.admin_delete_product, name='admin_delete_product'),
     path('custom-admin/order/cancel/<int:order_id>/', views.admin_cancel_order, name='admin_cancel_order'),
+    path('custom-admin/order/update-status/<int:order_id>/', views.admin_update_order_status, name='admin_update_order_status'),
     path('custom-admin/category/add/', views.admin_add_category, name='admin_add_category'),
     path('custom-admin/category/delete/<int:category_id>/', views.admin_delete_category, name='admin_delete_category'),
 
