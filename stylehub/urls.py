@@ -69,6 +69,7 @@ urlpatterns = [
 
     # User Profile
     path('profile/', views.profile_view, name='profile'),
+    path('profile/delete/', views.delete_account, name='delete_account'),
     path('my-orders/', views.my_orders, name='my_orders'),
     path('cancel-order/<int:order_id>/', views.cancel_order, name='cancel_order'),
     path('wishlist/', views.wishlist_view, name='wishlist'),

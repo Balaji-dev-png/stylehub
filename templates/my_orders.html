@@ -1,7 +1,7 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script>
         // Inject theme early to prevent flash of white content
@@ -17,44 +17,102 @@
     <script src="{% static 'main.js' %}?v=3" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        .orders-container { max-width: 1000px; margin: 50px auto; padding: 0 20px; }
-        .order-card { 
-            background: var(--bg-card); 
+        .orders-container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .order-card {
+            background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 10px; 
-            margin-bottom: 20px; 
+            border-radius: 10px;
+            margin-bottom: 20px;
             padding: 20px;
             box-shadow: var(--shadow);
         }
-        .order-header { 
-            display: flex; 
-            justify-content: space-between; 
-            border-bottom: 1px solid var(--border-color); 
-            padding-bottom: 15px; 
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
             margin-bottom: 15px;
         }
-        .order-id { font-weight: 600; color: var(--text-main); font-size: 1.1rem; }
-        .order-date { color: var(--text-muted); font-size: 0.9rem; }
-        .order-status { 
-            padding: 5px 12px; 
-            border-radius: 20px; 
-            font-size: 0.8rem; 
-            font-weight: 600; 
+
+        .order-id {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 1.1rem;
+        }
+
+        .order-date {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .order-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
             text-transform: uppercase;
         }
-        .status-Pending { background: #fff3cd; color: #856404; }
-        .status-Shipped { background: #d1ecf1; color: #0c5460; }
-        .status-Delivered { background: #d4edda; color: #155724; }
-        .status-Cancelled { background: #f8d7da; color: #721c24; }
-        
-        .order-items-grid { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; }
-        .mini-item { position: relative; width: 60px; height: 80px; flex-shrink: 0; }
-        .mini-item img { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; }
-        .mini-qty { 
-            position: absolute; bottom: -5px; right: -5px; 
-            background: #333; color: #fff; font-size: 10px; 
-            width: 18px; height: 18px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
+
+        .status-Pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-Shipped {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-Delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-Cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .order-items-grid {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .mini-item {
+            position: relative;
+            width: 60px;
+            height: 80px;
+            flex-shrink: 0;
+        }
+
+        .mini-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .mini-qty {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: #333;
+            color: #fff;
+            font-size: 10px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .order-footer {
@@ -65,7 +123,12 @@
             padding-top: 15px;
             border-top: 1px dashed var(--border-color);
         }
-        .order-total { font-weight: 700; color: var(--text-main); font-size: 1.1rem; }
+
+        .order-total {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 1.1rem;
+        }
 
         .cancel-btn {
             background-color: transparent;
@@ -79,40 +142,42 @@
             transition: 0.3s;
             font-weight: 500;
         }
+
         .cancel-btn:hover {
             background-color: #ff4757;
             color: white;
         }
     </style>
 </head>
+
 <body>
 
     {% if messages %}
-        <div class="toast-container">
-            {% for message in messages %}
-                <div class="toast {% if message.tags == 'success' %}toast-success{% else %}toast-error{% endif %}">
-                    <span>{{ message }}</span>
-                    <span class="toast-close" onclick="this.parentElement.style.display='none';">&times;</span>
-                </div>
-            {% endfor %}
+    <div class="toast-container">
+        {% for message in messages %}
+        <div class="toast {% if message.tags == 'success' %}toast-success{% else %}toast-error{% endif %}">
+            <span>{{ message }}</span>
+            <span class="toast-close" onclick="this.parentElement.style.display='none';">&times;</span>
         </div>
+        {% endfor %}
+    </div>
     {% endif %}
 
     <nav class="navbar">
         <div class="logo">Style<span>hub</span></div>
-       <ul class="nav-links">
-    <li><a href="{% url 'home' %}">Home</a></li>
-    <li><a href="{% url 'pro_list' %}">Shop</a></li>
-    <li><a href="{% url 'new' %}">New Arrivals</a></li>
-    <li><a href="{% url 'contact' %}">Contact</a></li>
-    
-    {% if user.is_authenticated %}
-        <!-- LOGOUT REMOVED, PROFILE ADDED -->
-        <li><a href="{% url 'profile' %}">Profile</a></li>
-    {% else %}
-        <li><a href="{% url 'auth' %}">Login</a></li>
-    {% endif %}
-</ul>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'pro_list' %}">Shop</a></li>
+            <li><a href="{% url 'new' %}">New Arrivals</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+
+            {% if user.is_authenticated %}
+            <!-- LOGOUT REMOVED, PROFILE ADDED -->
+            <li><a href="{% url 'profile' %}" class="active">Profile</a></li>
+            {% else %}
+            <li><a href="{% url 'auth' %}">Login</a></li>
+            {% endif %}
+        </ul>
         <div class="nav-icons" style="display: flex; align-items: center;">
             <a href="{% url 'cart' %}" class="cart-link">
                 🛒 <span class="global-badge">{{ cart_count|default:0 }}</span>
@@ -125,61 +190,62 @@
         <h1 class="page-title">My Orders</h1>
 
         {% if orders %}
-            {% for order in orders %}
-            <div class="order-card">
-                <div class="order-header">
-                    <div>
-                        <div class="order-id">Order #{{ order.id }}</div>
-                        <span class="order-date">{{ order.created_at|date:"M d, Y" }}</span>
-                    </div>
-                    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
-                        <span class="order-status status-{{ order.status }}">{{ order.status }}</span>
-                        
-                        {% if order.status == 'Pending' %}
-                            <a href="{% url 'cancel_order' order.id %}" 
-                               onclick="return confirm('Are you sure you want to cancel this order? This action cannot be undone.');" 
-                               class="cancel-btn">
-                                Cancel Order
-                            </a>
-                        {% endif %}
-                    </div>
+        {% for order in orders %}
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <div class="order-id">Order #{{ order.id }}</div>
+                    <span class="order-date">{{ order.created_at|date:"M d, Y" }}</span>
                 </div>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
+                    <span class="order-status status-{{ order.status }}">{{ order.status }}</span>
 
-                <div class="order-items-grid">
-                    {% for item in order.items.all %}
-                    <div class="mini-item">
-                        {% if item.product.image %}
-                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
-                        {% else %}
-                            <img src="{{ product.image_url }}" alt="{{ item.product.name }}">
-                        {% endif %}
-                        <span class="mini-qty">{{ item.quantity }}</span>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <div class="order-footer">
-                    <span>{{ order.items.count }} Items</span>
-                    <span class="order-total">Total: ${{ order.total_price }}</span>
+                    {% if order.status == 'Pending' %}
+                    <a href="{% url 'cancel_order' order.id %}"
+                        onclick="return confirm('Are you sure you want to cancel this order? This action cannot be undone.');"
+                        class="cancel-btn">
+                        Cancel Order
+                    </a>
+                    {% endif %}
                 </div>
             </div>
-            {% endfor %}
+
+            <div class="order-items-grid">
+                {% for item in order.items.all %}
+                <div class="mini-item">
+                    {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                    {% else %}
+                    <img src="{{ product.image_url }}" alt="{{ item.product.name }}">
+                    {% endif %}
+                    <span class="mini-qty">{{ item.quantity }}</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="order-footer">
+                <span>{{ order.items.count }} Items</span>
+                <span class="order-total">Total: ${{ order.total_price }}</span>
+            </div>
+        </div>
+        {% endfor %}
         {% else %}
-            <div style="text-align: center; padding: 40px;">
-                <h2>No orders found</h2>
-                <p>Looks like you haven't bought anything yet.</p>
-                <a href="{% url 'pro_list' %}" style="display:inline-block; margin-top:20px; text-decoration:none;">
-                    <button class="checkout-btn" style="width: auto; padding: 10px 30px;">Start Shopping</button>
-                </a>
-            </div>
+        <div style="text-align: center; padding: 40px;">
+            <h2>No orders found</h2>
+            <p>Looks like you haven't bought anything yet.</p>
+            <a href="{% url 'pro_list' %}" style="display:inline-block; margin-top:20px; text-decoration:none;">
+                <button class="checkout-btn" style="width: auto; padding: 10px 30px;">Start Shopping</button>
+            </a>
+        </div>
         {% endif %}
     </main>
-    
-  <footer class="site-footer reveal-on-scroll">
+
+    <footer class="site-footer reveal-on-scroll">
         <div class="footer-content">
             <div class="footer-brand">
                 <h2 class="footer-logo">Stylehub™</h2>
-                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal
+                    elegance.</p>
                 <div class="social-icons">
                     <a href="https://www.instagram.com/">📷</a>
                     <a href="https://www.facebook.com/">fb</a>
@@ -204,9 +270,9 @@
             </div>
         </div>
     </footer>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const toasts = document.querySelectorAll('.toast');
             toasts.forEach(toast => {
                 setTimeout(() => {
@@ -221,9 +287,10 @@
 
     <!-- ADMIN FLOATING BUTTON -->
     {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-            ⚙️ Admin Panel
-        </a>
+    <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Admin Panel
+    </a>
     {% endif %}
 </body>
+
 </html>

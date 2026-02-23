@@ -251,6 +251,8 @@ hr {
 
 .checkout-btn:hover {
     background: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 71, 87, 0.3);
 }
 
 [data-theme="dark"] .checkout-btn {
@@ -260,6 +262,9 @@ hr {
 
 [data-theme="dark"] .checkout-btn:hover {
     background: #e84118;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(232, 65, 24, 0.4);
 }
 
 /* Promo Code Section - Fixed Layout */

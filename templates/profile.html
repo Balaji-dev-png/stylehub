@@ -1,7 +1,7 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script>
         // Inject theme early to prevent flash of white content
@@ -17,6 +17,7 @@
     <script src="{% static 'main.js' %}?v=3" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
     <!-- Standard Navbar -->
@@ -44,18 +45,19 @@
     </header>
 
     {% if messages %}
-        <div class="toast-container" style="position:fixed; bottom:20px; right:20px; z-index:9999;">
-            {% for message in messages %}
-                <div style="background:#4caf50; color:white; padding:15px; border-radius:5px; margin-top:10px; box-shadow:0 5px 15px rgba(0,0,0,0.2);">
-                    {{ message }}
-                </div>
-            {% endfor %}
+    <div class="toast-container" style="position:fixed; bottom:20px; right:20px; z-index:9999;">
+        {% for message in messages %}
+        <div
+            style="background:#4caf50; color:white; padding:15px; border-radius:5px; margin-top:10px; box-shadow:0 5px 15px rgba(0,0,0,0.2);">
+            {{ message }}
         </div>
-        <script>
-            setTimeout(function(){
-                document.querySelector('.toast-container').style.display = 'none';
-            }, 3000);
-        </script>
+        {% endfor %}
+    </div>
+    <script>
+        setTimeout(function () {
+            document.querySelector('.toast-container').style.display = 'none';
+        }, 3000);
+    </script>
     {% endif %}
 
     <main class="profile-container reveal-on-scroll">
@@ -71,19 +73,34 @@
                 <a href="#" class="active" onclick="return false;">👤 Account Details</a>
                 <a href="{% url 'my_orders' %}">📦 My Orders</a>
                 <a href="{% url 'logout' %}" class="logout">🚪 Logout</a>
+
+                <div
+                    style="margin-top: auto; padding: 20px 0 0 0; border-top: 1px solid var(--border-color); margin-top: 20px;">
+                    <form method="POST" action="{% url 'delete_account' %}"
+                        onsubmit="return confirm('Are you absolutely sure you want to delete your account? This action cannot be undone and you will lose all your order history!');">
+                        {% csrf_token %}
+                        <button type="submit"
+                            style="background: transparent; color: #ff4757; border: 1px solid #ff4757; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 500; width: 100%; transition: 0.3s;"
+                            onmouseover="this.style.background='#ff4757'; this.style.color='white';"
+                            onmouseout="this.style.background='transparent'; this.style.color='#ff4757';">
+                            ⚠️ Delete Account
+                        </button>
+                    </form>
+                </div>
             </nav>
         </aside>
 
         <!-- Main Content -->
         <section class="profile-content">
-            
+
             <!-- Update Profile Form -->
             <div class="settings-card">
                 <h3>Update Shipping Address</h3>
                 <form class="settings-form" method="POST">
                     {% csrf_token %}
-                    
-                    <h4 style="margin-bottom:15px; color:var(--text-muted); font-size:14px; text-transform:uppercase;">Personal Info</h4>
+
+                    <h4 style="margin-bottom:15px; color:var(--text-muted); font-size:14px; text-transform:uppercase;">
+                        Personal Info</h4>
                     <div class="form-row">
                         <div class="input-group">
                             <label>First Name</label>
@@ -97,19 +114,23 @@
                     <div class="form-row">
                         <div class="input-group">
                             <label>Email Address (ReadOnly)</label>
-                            <input type="email" value="{{ user.email }}" readonly style="opacity:0.7; cursor:not-allowed;">
+                            <input type="email" value="{{ user.email }}" readonly
+                                style="opacity:0.7; cursor:not-allowed;">
                         </div>
                         <div class="input-group">
                             <label>Phone Number</label>
-                            <input type="text" name="phone" value="{{ profile.phone|default:'' }}" placeholder="+1 234 567 8900" oninput="validatePhone(this)">
+                            <input type="text" name="phone" value="{{ profile.phone|default:'' }}"
+                                placeholder="+1 234 567 8900" oninput="validatePhone(this)">
                         </div>
                     </div>
 
-                    <h4 style="margin:20px 0 15px; color:var(--text-muted); font-size:14px; text-transform:uppercase;">Shipping Details</h4>
-                    
+                    <h4 style="margin:20px 0 15px; color:var(--text-muted); font-size:14px; text-transform:uppercase;">
+                        Shipping Details</h4>
+
                     <div class="input-group">
                         <label>Address Line</label>
-                        <input type="text" name="address" value="{{ profile.address|default:'' }}" placeholder="123 Main St">
+                        <input type="text" name="address" value="{{ profile.address|default:'' }}"
+                            placeholder="123 Main St">
                     </div>
 
                     <div class="form-row">
@@ -126,7 +147,8 @@
                     <div class="form-row">
                         <div class="input-group">
                             <label>Zip Code</label>
-                            <input type="text" name="zip_code" value="{{ profile.zip_code|default:'' }}" oninput="validateStrictNumber(this)">
+                            <input type="text" name="zip_code" value="{{ profile.zip_code|default:'' }}"
+                                oninput="validateStrictNumber(this)">
                         </div>
                         <div class="input-group">
                             <label>Country</label>
@@ -137,6 +159,7 @@
                     <button type="submit" class="save-btn">Save Changes</button>
                 </form>
             </div>
+
 
             <!-- Recent Orders Mini-View -->
             <div class="content-header" style="margin-top: 40px;">
@@ -176,11 +199,12 @@
     </main>
 
     <!-- Standard Footer -->
-  <footer class="site-footer reveal-on-scroll">
+    <footer class="site-footer reveal-on-scroll">
         <div class="footer-content">
             <div class="footer-brand">
                 <h2 class="footer-logo">Stylehub™</h2>
-                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal
+                    elegance.</p>
                 <div class="social-icons">
                     <a href="https://www.instagram.com/">📷</a>
                     <a href="https://www.facebook.com/">fb</a>
@@ -223,9 +247,10 @@
 
     <!-- ADMIN FLOATING BUTTON -->
     {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-            ⚙️ Admin Panel
-        </a>
+    <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Admin Panel
+    </a>
     {% endif %}
 </body>
+
 </html>

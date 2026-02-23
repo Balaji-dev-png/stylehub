@@ -29,11 +29,13 @@ class Category(models.Model):
 class Product(models.Model):
     # Change this line in your Product model
     category = models.ForeignKey(Category, related_name='products', on_delete=models.SET_NULL, null=True, blank=True)
+
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='products/', blank=True, null=True) 
+
     image_url = models.URLField(blank=True, null=True)
     stock = models.IntegerField(default=10)
     
@@ -54,6 +56,9 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+
+
+
 # ==========================================
 # 2. CART MODULE
 # ==========================================
@@ -65,6 +70,10 @@ class Cart(models.Model):
     def get_total(self):
         return sum(item.get_cost() for item in self.items.all())
 
+
+
+
+
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -72,6 +81,14 @@ class CartItem(models.Model):
 
     def get_cost(self):
         return self.product.price * self.quantity
+
+
+
+
+
+
+
+
 
 # ==========================================
 # 3. ORDER MANAGEMENT MODULE
@@ -95,6 +112,10 @@ class Order(models.Model):
     def __str__(self):
         return f"Order #{self.id} by {self.user.username}"
 
+
+
+
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -103,6 +124,14 @@ class OrderItem(models.Model):
 
     def get_cost(self):
         return self.price * self.quantity
+
+
+
+
+
+
+
+
 
 # ==========================================
 # 4. USER PROFILE MODULE
@@ -119,6 +148,11 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
 
+
+
+
+
+
 @receiver(post_save, sender=User)
 def manage_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -128,6 +162,10 @@ def manage_user_profile(sender, instance, created, **kwargs):
             instance.userprofile.save()
         else:
             UserProfile.objects.create(user=instance)
+
+
+
+
 
 class Wishlist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='wishlist')

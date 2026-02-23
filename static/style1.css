@@ -70,13 +70,15 @@ body {
     transition: transform 0.3s ease-out;
 }
 
-.nav-links a:hover::after {
+.nav-links a:hover::after,
+.nav-links a.active::after {
     transform: scaleX(1);
     transform-origin: bottom left;
 }
 
 /* HOVER LOGIC: Change color ONLY in Dark Mode */
-[data-theme="dark"] .nav-links a:hover {
+[data-theme="dark"] .nav-links a:hover,
+[data-theme="dark"] .nav-links a.active {
     color: #ff4757 !important;
     /* Accent color in dark mode */
 }

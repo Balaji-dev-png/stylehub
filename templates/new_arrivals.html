@@ -1,7 +1,7 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script>
         // Inject theme early to prevent flash of white content
@@ -17,30 +17,31 @@
     <script src="{% static 'main.js' %}?v=3" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
     <nav class="navbar">
         <div class="logo">Style<span>hub</span></div>
-       <ul class="nav-links">
-    <li><a href="{% url 'home' %}">Home</a></li>
-    <li><a href="{% url 'pro_list' %}">Shop</a></li>
-    <li><a href="{% url 'new' %}">New Arrivals</a></li>
-    <li><a href="{% url 'contact' %}">Contact</a></li>
-    
-    {% if user.is_authenticated %}
-        <!-- LOGOUT REMOVED, PROFILE ADDED -->
-        <li><a href="{% url 'profile' %}">Profile</a></li>
-    {% else %}
-        <li><a href="{% url 'auth' %}">Login</a></li>
-    {% endif %}
-</ul>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'pro_list' %}">Shop</a></li>
+            <li><a href="{% url 'new' %}" class="active">New Arrivals</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+
+            {% if user.is_authenticated %}
+            <!-- LOGOUT REMOVED, PROFILE ADDED -->
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+            {% else %}
+            <li><a href="{% url 'auth' %}">Login</a></li>
+            {% endif %}
+        </ul>
         <div class="nav-icons" style="display: flex; align-items: center;">
             <!-- Added Search Form -->
             <form action="{% url 'search_result' %}" method="GET" class="search-form">
                 <input type="text" name="q" class="search-input" placeholder="Search..." required>
                 <button type="submit" class="search-btn">🔍</button>
             </form>
-            
+
             <a href="{% url 'cart' %}" class="cart-link">
                 🛒 <span class="global-badge">{{ cart_count|default:0 }}</span>
             </a>
@@ -66,9 +67,9 @@
                 <div class="image-container">
                     <a href="{% url 'pro_detail' product.slug %}" target="_blank">
                         {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
                         {% else %}
-                            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                        <img src="{{ product.image_url }}" alt="{{ product.name }}">
                         {% endif %}
                     </a>
                     <span class="new-tag">New</span>
@@ -92,7 +93,8 @@
         <div class="footer-content">
             <div class="footer-brand">
                 <h2 class="footer-logo">Stylehub™</h2>
-                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal
+                    elegance.</p>
                 <div class="social-icons">
                     <a href="https://www.instagram.com/">📷</a>
                     <a href="https://www.facebook.com/">fb</a>
@@ -121,9 +123,10 @@
 
     <!-- ADMIN FLOATING BUTTON -->
     {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-            ⚙️ Admin Panel
-        </a>
+    <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Admin Panel
+    </a>
     {% endif %}
 </body>
+
 </html>

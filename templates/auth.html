@@ -1,7 +1,7 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script>
         // Inject theme early to prevent flash of white content
@@ -17,23 +17,24 @@
     <script src="{% static 'main.js' %}?v=3" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
     <nav class="navbar">
         <div class="logo">Style<span>hub</span></div>
         <ul class="nav-links">
-    <li><a href="{% url 'home' %}">Home</a></li>
-    <li><a href="{% url 'pro_list' %}">Shop</a></li>
-    <li><a href="{% url 'new' %}">New Arrivals</a></li>
-    <li><a href="{% url 'contact' %}">Contact</a></li>
-    
-    {% if user.is_authenticated %}
-        <!-- LOGOUT REMOVED, PROFILE ADDED -->
-        <li><a href="{% url 'profile' %}">Profile</a></li>
-    {% else %}
-        <li><a href="{% url 'auth' %}">Login</a></li>
-    {% endif %}
-</ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'pro_list' %}">Shop</a></li>
+            <li><a href="{% url 'new' %}">New Arrivals</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+
+            {% if user.is_authenticated %}
+            <!-- LOGOUT REMOVED, PROFILE ADDED -->
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+            {% else %}
+            <li><a href="{% url 'auth' %}" class="active">Login</a></li>
+            {% endif %}
+        </ul>
         <div class="nav-icons" style="display: flex; align-items: center;">
             <button id="theme-toggle" class="theme-toggle">🌙</button>
         </div>
@@ -42,15 +43,15 @@
     <div class="main-content">
         <div class="auth-card reveal-on-scroll">
             <div class="card-logo">Style<span>hub</span></div>
-            
+
             {% if messages %}
-                <div class="messages-container">
-                    {% for message in messages %}
-                        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                    {{ message }}
                 </div>
+                {% endfor %}
+            </div>
             {% endif %}
 
             <div class="auth-tabs">
@@ -93,8 +94,10 @@
                 </div>
                 <div class="input-group password-group">
                     <label>Confirm Password</label>
-                    <input type="password" name="confirm_password" id="reg-pass-conf" placeholder="Confirm password" required>
-                    <button type="button" class="toggle-pass" onclick="togglePassword('reg-pass-conf', this)">👁️</button>
+                    <input type="password" name="confirm_password" id="reg-pass-conf" placeholder="Confirm password"
+                        required>
+                    <button type="button" class="toggle-pass"
+                        onclick="togglePassword('reg-pass-conf', this)">👁️</button>
                 </div>
                 <p class="terms">By signing up, you agree to our <a href="#">Terms & Conditions</a>.</p>
                 <button type="submit" class="auth-btn">Create Account</button>
@@ -111,16 +114,17 @@
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        if(urlParams.get('tab') === 'login') {
+        if (urlParams.get('tab') === 'login') {
             window.toggleAuth('login');
         }
     </script>
 
     <!-- ADMIN FLOATING BUTTON -->
     {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-            ⚙️ Admin Panel
-        </a>
+    <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Admin Panel
+    </a>
     {% endif %}
 </body>
+
 </html>

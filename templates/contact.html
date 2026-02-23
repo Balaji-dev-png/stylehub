@@ -1,7 +1,7 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script>
         // Inject theme early to prevent flash of white content
@@ -17,37 +17,38 @@
     <script src="{% static 'main.js' %}?v=3" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
 
     {% if messages %}
-        <div class="toast-container">
-            {% for message in messages %}
-                <div class="toast {% if message.tags == 'success' %}toast-success{% else %}toast-error{% endif %}">
-                    <span>{{ message }}</span>
-                    <span class="toast-close" onclick="this.parentElement.style.display='none';">&times;</span>
-                </div>
-            {% endfor %}
+    <div class="toast-container">
+        {% for message in messages %}
+        <div class="toast {% if message.tags == 'success' %}toast-success{% else %}toast-error{% endif %}">
+            <span>{{ message }}</span>
+            <span class="toast-close" onclick="this.parentElement.style.display='none';">&times;</span>
         </div>
+        {% endfor %}
+    </div>
     {% endif %}
 
-   
+
 
     <nav class="navbar">
         <div class="logo">Style<span>hub</span></div>
         <ul class="nav-links">
-    <li><a href="{% url 'home' %}">Home</a></li>
-    <li><a href="{% url 'pro_list' %}">Shop</a></li>
-    <li><a href="{% url 'new' %}">New Arrivals</a></li>
-    <li><a href="{% url 'contact' %}">Contact</a></li>
-    
-    {% if user.is_authenticated %}
-        <!-- LOGOUT REMOVED, PROFILE ADDED -->
-        <li><a href="{% url 'profile' %}">Profile</a></li>
-    {% else %}
-        <li><a href="{% url 'auth' %}">Login</a></li>
-    {% endif %}
-</ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'pro_list' %}">Shop</a></li>
+            <li><a href="{% url 'new' %}">New Arrivals</a></li>
+            <li><a href="{% url 'contact' %}" class="active">Contact</a></li>
+
+            {% if user.is_authenticated %}
+            <!-- LOGOUT REMOVED, PROFILE ADDED -->
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+            {% else %}
+            <li><a href="{% url 'auth' %}">Login</a></li>
+            {% endif %}
+        </ul>
         <div class="nav-icons" style="display: flex; align-items: center;">
             <a href="{% url 'cart' %}" class="cart-link">
                 🛒 <span class="global-badge">{{ cart_count|default:0 }}</span>
@@ -70,7 +71,8 @@
                 </div>
                 <div class="info-item">
                     <h3>Email Us</h3>
-                    <p><a href="{% url 'team_emails' %}" style="text-decoration: none; color: white;">Team Emails Directory</a></p>
+                    <p><a href="{% url 'team_emails' %}" style="text-decoration: none; color: white;">Team Emails
+                            Directory</a></p>
                 </div>
                 <div class="info-item">
                     <h3>Call Us</h3>
@@ -119,7 +121,8 @@
         <div class="footer-content">
             <div class="footer-brand">
                 <h2 class="footer-logo">Stylehub™</h2>
-                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal elegance.</p>
+                <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal
+                    elegance.</p>
                 <div class="social-icons">
                     <a href="https://www.instagram.com/">📷</a>
                     <a href="https://www.facebook.com/">fb</a>
@@ -146,25 +149,26 @@
     </footer>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const toasts = document.querySelectorAll('.toast');
-        toasts.forEach(toast => {
-            setTimeout(() => {
-                toast.style.transition = "opacity 0.5s ease, transform 0.5s ease";
-                toast.style.opacity = "0";
-                toast.style.transform = "translateX(100%)";
-                setTimeout(() => toast.remove(), 500);
-            }, 4000);
+        document.addEventListener('DOMContentLoaded', function () {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    toast.style.transition = "opacity 0.5s ease, transform 0.5s ease";
+                    toast.style.opacity = "0";
+                    toast.style.transform = "translateX(100%)";
+                    setTimeout(() => toast.remove(), 500);
+                }, 4000);
+            });
         });
-    });
-</script>
+    </script>
 
 
     <!-- ADMIN FLOATING BUTTON -->
     {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-            ⚙️ Admin Panel
-        </a>
+    <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Admin Panel
+    </a>
     {% endif %}
 </body>
+
 </html>

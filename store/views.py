@@ -11,8 +11,12 @@ from django.db.models import Q
 import stripe
 from django.conf import settings
 from django.urls import reverse
-
 from .models import Product, Category, Cart, CartItem, Order, OrderItem, UserProfile, Wishlist
+
+
+
+
+
 
 # --- Custom Admin Check ---
 def is_admin(user):
@@ -27,10 +31,17 @@ def home(request):
     featured = Product.objects.filter(is_available=True, is_featured=True)[:9]
     return render(request, 'home.html', {'featured_products': featured})
 
+
+
+
 def new_arrivals(request):
     # Only show products with is_new_arrival=True
     new_products = Product.objects.filter(is_available=True, is_new_arrival=True).order_by('-created_at')[:20]
     return render(request, 'new_arrivals.html', {'products': new_products})
+
+
+
+
 
 def product_list(request, category_slug=None):
     category = None
@@ -49,6 +60,12 @@ def product_list(request, category_slug=None):
     context = {'products': products, 'category': category, 'all_categories': all_categories}
     return render(request, 'pro_list.html', context)
 
+
+
+
+
+
+
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug)
     in_wishlist = False
@@ -60,6 +77,11 @@ def product_detail(request, slug):
             
     return render(request, 'pro_detail.html', {'product': product, 'in_wishlist': in_wishlist})
 
+
+
+
+
+
 def search_result(request):
     query = request.GET.get('q')
     products = []
@@ -69,6 +91,13 @@ def search_result(request):
             is_available=True
         )
     return render(request, 'search_result.html', {'products': products, 'query': query})
+
+
+
+
+
+
+
 
 
 # ==========================================
@@ -93,6 +122,13 @@ def admin_dashboard(request):
     }
     return render(request, 'admin_dashboard.html', context)
 
+
+
+
+
+
+
+
 @user_passes_test(is_admin, login_url='home')
 def admin_add_product(request):
     categories = Category.objects.all()
@@ -116,6 +152,12 @@ def admin_add_product(request):
         return redirect('admin_dashboard')
 
     return render(request, 'admin_product_form.html', {'categories': categories})
+
+
+
+
+
+
 
 @user_passes_test(is_admin, login_url='home')
 def admin_edit_product(request, product_id):
@@ -147,12 +189,23 @@ def admin_edit_product(request, product_id):
 
     return render(request, 'admin_product_form.html', {'product': product, 'categories': categories})
 
+
+
+
+
+
+
 @user_passes_test(is_admin, login_url='home')
 def admin_delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     product.delete()
     messages.success(request, "Product deleted successfully!")
     return redirect('admin_dashboard')
+
+
+
+
+
 
 @user_passes_test(is_admin, login_url='home')
 def admin_cancel_order(request, order_id):
@@ -179,6 +232,13 @@ def admin_cancel_order(request, order_id):
         messages.error(request, 'Order cannot be cancelled.')
     return redirect('admin_dashboard')
 
+
+
+
+
+
+
+
 # --- CATEGORY VIEWS (COMMA SEPARATED) ---
 @user_passes_test(is_admin, login_url='home')
 def admin_add_category(request):
@@ -202,6 +262,11 @@ def admin_add_category(request):
     
     return render(request, 'admin_category_form.html')
 
+
+
+
+
+
 @user_passes_test(is_admin, login_url='home')
 def admin_delete_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
@@ -209,6 +274,11 @@ def admin_delete_category(request, category_id):
     category.delete()
     messages.success(request, f"Category '{category_name}' deleted.")
     return redirect('admin_dashboard')
+
+
+
+
+
 
 
 # ==========================================
@@ -219,6 +289,11 @@ def admin_delete_category(request, category_id):
 def cart_view(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
     return render(request, 'cart.html', {'cart': cart})
+
+
+
+
+
 
 @login_required(login_url='auth')
 def add_to_cart(request, product_id):
@@ -240,6 +315,12 @@ def add_to_cart(request, product_id):
         
     return redirect('cart')
 
+
+
+
+
+
+
 @login_required(login_url='auth')
 def update_cart(request, item_id, action):
     item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
@@ -254,11 +335,20 @@ def update_cart(request, item_id, action):
             item.delete()
     return redirect('cart')
 
+
+
+
+
+
 @login_required(login_url='auth')
 def remove_from_cart(request, item_id):
     item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
     item.delete()
     return redirect('cart')
+
+
+
+
 
 @login_required(login_url='auth')
 def checkout(request):
@@ -268,6 +358,10 @@ def checkout(request):
         return redirect('pro_list')
     profile = UserProfile.objects.filter(user=request.user).first()
     return render(request, 'checkout.html', {'cart': cart, 'profile': profile})
+
+
+
+
 
 
 
@@ -317,6 +411,11 @@ def place_order(request):
         
     return redirect('checkout')
 
+
+
+
+
+
 # --- NEW VIEW: Runs only if Stripe payment is successful ---
 @login_required(login_url='auth')
 def payment_success(request):
@@ -324,6 +423,10 @@ def payment_success(request):
     checkout_data = request.session.get('checkout_data')
 
     if not checkout_data or not cart.items.exists():
+        # Check if they just completed an order successfully (it clears the session)
+        latest_order = Order.objects.filter(user=request.user).order_by('-created_at').first()
+        if latest_order and (latest_order.status == 'Pending' or latest_order.status == 'Shipped' or latest_order.status == 'Delivered'):
+             return render(request, 'success.html', {'order': latest_order})
         return redirect('home')
 
     # Create the actual order now that payment is confirmed
@@ -364,11 +467,23 @@ def payment_success(request):
         
     return render(request, 'success.html', {'order': order})
 
+
+
+
+
+
+
+
 # --- NEW VIEW: Runs if user clicks "back" on the Stripe page ---
 @login_required(login_url='auth')
 def payment_cancel(request):
     messages.error(request, "Payment was cancelled. Please try again.")
     return redirect('checkout')
+
+
+
+
+
 
 # ==========================================
 # 4. USER DASHBOARD & PROFILE
@@ -396,10 +511,29 @@ def profile_view(request):
     recent_orders = Order.objects.filter(user=request.user).order_by('-created_at')[:5]
     return render(request, 'profile.html', {'orders': recent_orders, 'profile': user_profile})
 
+
+
+
+@login_required(login_url='auth')
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        logout(request)
+        user.delete()
+        messages.success(request, "Your account has been successfully deleted.")
+        return redirect('home')
+    return redirect('profile')
+
+
+
 @login_required(login_url='auth')
 def my_orders(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'my_orders.html', {'orders': orders})
+
+
+
+
 
 @login_required(login_url='auth')
 def cancel_order(request, order_id):
@@ -413,6 +547,11 @@ def cancel_order(request, order_id):
         messages.success(request, 'Order cancelled.')
     return redirect('my_orders')
 
+
+
+
+
+
 @login_required(login_url='auth')
 def toggle_wishlist(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -425,10 +564,23 @@ def toggle_wishlist(request, product_id):
         messages.success(request, f'Added {product.name} to wishlist.')
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
+
+
+
+
+
+
+
 @login_required(login_url='auth')
 def wishlist_view(request):
     wishlist, created = Wishlist.objects.get_or_create(user=request.user)
     return render(request, 'wishlist.html', {'wishlist_products': wishlist.products.all()})
+
+
+
+
+
+
 
 # ==========================================
 # 5. AUTHENTICATION MODULE
@@ -436,6 +588,10 @@ def wishlist_view(request):
 
 def auth_view(request):
     return render(request, 'auth.html')
+
+
+
+
 
 def user_login(request):
     if request.method == 'POST':
@@ -448,6 +604,11 @@ def user_login(request):
         messages.error(request, 'Invalid email or password.')
         return redirect('auth')
     return redirect('auth')
+
+
+
+
+
 
 def user_signup(request):
     if request.method == 'POST':
@@ -467,20 +628,38 @@ def user_signup(request):
         return redirect('/auth/?tab=login') 
     return redirect('auth')
 
+
+
+
+
 def user_logout(request):
     logout(request)
     return redirect('home')
 
+
+
+
 def contact(request):
     return render(request, 'contact.html')
+
+
+
+
 
 def contact_submit(request):
     if request.method == 'POST':
         messages.success(request, 'Message sent successfully!')
     return redirect('contact')
 
+
+
+
 def about(request):
     return render(request, 'about.html')
+
+
+
+
 
 def team_emails(request):
     return render(request, 'team_emails.html')
