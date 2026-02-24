@@ -180,20 +180,70 @@ textarea {
 /* --- GLOBAL CART BADGE STYLE --- */
 .cart-link {
     text-decoration: none;
-    margin-right: 5px;
+    margin-right: 15px;
+    /* Increased margin for box */
     font-size: 1.2rem;
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    color: var(--text-main) !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.cart-link:hover {
+    transform: translateY(-5px) scale(1.05);
+    border-color: var(--accent-color);
+    box-shadow: 0 10px 20px rgba(255, 71, 87, 0.15);
+    background: var(--input-bg);
+}
+
+.cart-link i {
+    transition: transform 0.3s ease;
+}
+
+.cart-link:hover i {
+    animation: cartBounce 0.4s ease forwards;
+}
+
+@keyframes cartBounce {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
 }
 
 .global-badge {
     background: #ff4757 !important;
-    /* Force Red */
     color: white !important;
     padding: 2px 6px;
     border-radius: 50%;
-    font-size: 0.8rem;
-    position: relative;
-    top: -2px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    box-shadow: 0 4px 8px rgba(255, 71, 87, 0.3);
+    border: 2px solid var(--bg-nav);
+    /* To separate it from the cart box border */
+    transition: transform 0.3s;
+}
+
+.cart-link:hover .global-badge {
+    transform: scale(1.1);
 }
 
 /* --- SCROLL REVEAL ANIMATION ONLY --- */
