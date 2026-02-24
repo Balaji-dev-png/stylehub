@@ -221,8 +221,7 @@
                     {% endif %}
 
                     <div class="item-details">
-                        <a href="{% url 'pro_detail' item.product.slug %}" class="item-name" target="_blank">{{
-                            item.product.name }}</a>
+                        <a href="{% url 'pro_detail' item.product.slug %}" class="item-name" target="_blank">{{ item.product.name }}</a>
                         <p class="item-meta">Qty: {{ item.quantity }} × ${{ item.price }}</p>
                     </div>
                     <div class="item-price">
