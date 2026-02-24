@@ -23,7 +23,9 @@
     <!-- Standard Navbar -->
     <header>
         <nav class="navbar">
-            <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;"><div class="logo">Style<span>hub</span></div></a>
+            <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">
+                <div class="logo">Style<span>hub</span></div>
+            </a>
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url 'pro_list' %}">Shop</a></li>
@@ -135,28 +137,85 @@
 
                     <div class="form-row">
                         <div class="input-group">
-                            <label>City</label>
-                            <input type="text" name="city" value="{{ profile.city|default:'' }}">
+                            <label>Zip Code</label>
+                            <input type="text" name="zip_code" id="zip_code_val"
+                                value="{{ profile.zip_code|default:'' }}" oninput="validateStrictNumber(this)"
+                                maxlength="6" required>
+                            <span id="zip_status"
+                                style="font-size: 12px; font-weight: 500; display: block; margin-top: 5px;"></span>
                         </div>
                         <div class="input-group">
                             <label>State / Province</label>
-                            <input type="text" name="state" value="{{ profile.state|default:'' }}">
+                            <select name="state" id="state_select" required>
+                                <option value="">Select State</option>
+                            </select>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="input-group">
-                            <label>Zip Code</label>
-                            <input type="text" name="zip_code" value="{{ profile.zip_code|default:'' }}"
-                                oninput="validateStrictNumber(this)">
+                            <label>District</label>
+                            <select name="district" id="district_select" required>
+                                <option value="">Select District</option>
+                            </select>
                         </div>
                         <div class="input-group">
+                            <label>City</label>
+                            <input type="text" name="city" id="city_input" value="{{ profile.city|default:'' }}"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
                             <label>Country</label>
-                            <input type="text" name="country" value="{{ profile.country|default:'' }}">
+                            <input type="text" name="country" value="{{ profile.country|default:'India' }}" readonly
+                                style="opacity:0.7; cursor:not-allowed;">
                         </div>
                     </div>
 
                     <button type="submit" class="save-btn">Save Changes</button>
+
+                    <script src="{% static 'india_locations.js' %}"></script>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const stateSelect = document.getElementById("state_select");
+                            const districtSelect = document.getElementById("district_select");
+
+                            const savedState = "{{ profile.state|escapejs }}";
+                            const savedDistrict = "{{ profile.district|escapejs }}";
+
+                            // Populate states
+                            let states = Object.keys(indiaData).sort();
+                            states.forEach(state => {
+                                let option = document.createElement("option");
+                                option.value = state;
+                                option.textContent = state;
+                                if (state === savedState) option.selected = true;
+                                stateSelect.appendChild(option);
+                            });
+
+                            function populateDistricts(selectedState, defaultDistrict = "") {
+                                districtSelect.innerHTML = '<option value="">Select District</option>';
+                                if (indiaData[selectedState]) {
+                                    let districts = indiaData[selectedState].sort();
+                                    districts.forEach(district => {
+                                        let option = document.createElement("option");
+                                        option.value = district;
+                                        option.textContent = district;
+                                        if (district === defaultDistrict) option.selected = true;
+                                        districtSelect.appendChild(option);
+                                    });
+                                }
+                            }
+
+                            if (savedState) populateDistricts(savedState, savedDistrict);
+
+                            stateSelect.addEventListener("change", function () {
+                                populateDistricts(this.value);
+                            });
+                        });
+                    </script>
                 </form>
             </div>
 
@@ -202,7 +261,9 @@
     <footer class="site-footer reveal-on-scroll">
         <div class="footer-content">
             <div class="footer-brand">
-                <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;"><h2 class="footer-logo">Stylehub™</h2></a>
+                <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">
+                    <h2 class="footer-logo">Stylehub™</h2>
+                </a>
                 <p>We offer a wide range of fashion products to meet all your needs, from casual fits to formal
                     elegance.</p>
                 <div class="social-icons">

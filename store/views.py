@@ -418,7 +418,7 @@ def place_order(request):
             'first_name': request.POST.get('first_name'),
             'last_name': request.POST.get('last_name'),
             'email': request.POST.get('email'),
-            'address': f"{request.POST.get('address')}, {request.POST.get('city')}, {request.POST.get('zip')}",
+            'address': f"{request.POST.get('address')}, {request.POST.get('city')}, {request.POST.get('district', '')} {request.POST.get('zip')}",
             'city': request.POST.get('city'),
         }
 
@@ -540,6 +540,7 @@ def profile_view(request):
 
         user_profile.address = request.POST.get('address', '')
         user_profile.city = request.POST.get('city', '')
+        user_profile.district = request.POST.get('district', '')
         user_profile.state = request.POST.get('state', '')
         user_profile.zip_code = request.POST.get('zip_code', '')
         user_profile.country = request.POST.get('country', '')

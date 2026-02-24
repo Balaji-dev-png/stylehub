@@ -1,7 +1,7 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script>
         // Inject theme early to prevent flash of white content
@@ -17,20 +17,23 @@
     <script src="{% static 'main.js' %}?v=3" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
     <header class="checkout-header">
-        <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;"><div class="logo">Style<span>hub</span></div></a>
+        <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">
+            <div class="logo">Style<span>hub</span></div>
+        </a>
         <a href="{% url 'cart' %}" class="back-link">← Return to Cart</a>
         <button id="theme-toggle" class="theme-toggle">🌙</button>
     </header>
 
     <main class="container">
         <div class="checkout-layout">
-            
+
             <form class="checkout-forms" method="POST" action="{% url 'place_order' %}">
                 {% csrf_token %}
-                
+
                 <section class="form-section">
                     <h2>Contact Information</h2>
                     <input type="email" name="email" placeholder="Email Address" value="{{ user.email }}" required>
@@ -39,16 +42,70 @@
                 <section class="form-section">
                     <h2>Shipping Address</h2>
                     <div class="form-row">
-                        <input type="text" name="first_name" placeholder="First Name" class="half" value="{{ user.first_name }}" required>
-                        <input type="text" name="last_name" placeholder="Last Name" class="half" value="{{ user.last_name }}" required>
+                        <input type="text" name="first_name" placeholder="First Name" class="half"
+                            value="{{ user.first_name }}" required>
+                        <input type="text" name="last_name" placeholder="Last Name" class="half"
+                            value="{{ user.last_name }}" required>
                     </div>
-                    <input type="text" name="address" placeholder="Address" value="{{ profile.address|default:'' }}" required>
+                    <input type="text" name="address" placeholder="Address" value="{{ profile.address|default:'' }}"
+                        required>
                     <div class="form-row">
-                        <input type="text" name="city" placeholder="City" class="third" value="{{ profile.city|default:'' }}" required>
-                        <input type="text" name="state" placeholder="State" class="third" value="{{ profile.state|default:'' }}" required>
-                        <input type="text" name="zip" placeholder="ZIP code" class="third" value="{{ profile.zip_code|default:'' }}" required oninput="validateStrictNumber(this)">
+                        <select name="state" id="state_select" class="half" required>
+                            <option value="">Select State</option>
+                        </select>
+                        <select name="district" id="district_select" class="half" required>
+                            <option value="">Select District</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" name="city" id="city_input" placeholder="City" class="half"
+                            value="{{ profile.city|default:'' }}" required>
+                        <input type="text" name="zip" id="zip_code_val" placeholder="ZIP code" class="half"
+                            value="{{ profile.zip_code|default:'' }}" required oninput="validateStrictNumber(this)"
+                            maxlength="6">
                     </div>
                 </section>
+
+                <script src="{% static 'india_locations.js' %}"></script>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const stateSelect = document.getElementById("state_select");
+                        const districtSelect = document.getElementById("district_select");
+
+                        const savedState = "{{ profile.state|escapejs }}";
+                        const savedDistrict = "{{ profile.district|escapejs }}";
+
+                        // Populate states
+                        let states = Object.keys(indiaData).sort();
+                        states.forEach(state => {
+                            let option = document.createElement("option");
+                            option.value = state;
+                            option.textContent = state;
+                            if (state === savedState) option.selected = true;
+                            stateSelect.appendChild(option);
+                        });
+
+                        function populateDistricts(selectedState, defaultDistrict = "") {
+                            districtSelect.innerHTML = '<option value="">Select District</option>';
+                            if (indiaData[selectedState]) {
+                                let districts = indiaData[selectedState].sort();
+                                districts.forEach(district => {
+                                    let option = document.createElement("option");
+                                    option.value = district;
+                                    option.textContent = district;
+                                    if (district === defaultDistrict) option.selected = true;
+                                    districtSelect.appendChild(option);
+                                });
+                            }
+                        }
+
+                        if (savedState) populateDistricts(savedState, savedDistrict);
+
+                        stateSelect.addEventListener("change", function () {
+                            populateDistricts(this.value);
+                        });
+                    });
+                </script>
 
                 <!-- <section class="form-section">
                     <h2>Payment Simulation</h2>
@@ -78,10 +135,10 @@
                 {% for item in cart.items.all %}
                 <div class="summary-item">
                     <div class="item-img">
-                         {% if item.product.image %}
-                            <img src="{{ item.product.image.url }}" alt="Item">
+                        {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" alt="Item">
                         {% else %}
-                            <img src="{{ item.product.image_url }}" alt="Item">
+                        <img src="{{ item.product.image_url }}" alt="Item">
                         {% endif %}
                         <span class="qty-badge">{{ item.quantity }}</span>
                     </div>
@@ -111,9 +168,10 @@
 
     <!-- ADMIN FLOATING BUTTON -->
     {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-            ⚙️ Admin Panel
-        </a>
+    <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Admin Panel
+    </a>
     {% endif %}
 </body>
+
 </html>
