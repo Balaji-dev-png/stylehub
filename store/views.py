@@ -233,6 +233,9 @@ def admin_cancel_order(request, order_id):
     return redirect('admin_dashboard')
 
 
+
+
+
 @user_passes_test(is_admin, login_url='home')
 def admin_update_order_status(request, order_id):
     if request.method == 'POST':
@@ -243,6 +246,19 @@ def admin_update_order_status(request, order_id):
         if new_status in valid_statuses:
             order.status = new_status
             order.save()
+            
+            if new_status == 'Delivered':
+                try:
+                    send_mail(
+                        subject=f'Order #{order.id} Delivered | Stylehub',
+                        message=f"Hi {order.full_name},\n\nGreat news! Your order #{order.id} has been delivered successfully.\n\nThank you for shopping with stylehub!\n\nBest Regards,\nThe Stylehub Team",
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[order.email],
+                        fail_silently=True,
+                    )
+                except:
+                    pass
+                    
             messages.success(request, f'Order #{order.id} status updated to {new_status}.')
         else:
             messages.error(request, 'Invalid status.')
@@ -561,6 +577,18 @@ def cancel_order(request, order_id):
         for item in order.items.all():
             item.product.stock += item.quantity
             item.product.save()
+            
+        try:
+            send_mail(
+                subject=f'Order #{order.id} Cancelled | Stylehub',
+                message=f"Hi {order.full_name},\n\nYour order #{order.id} has been successfully cancelled.\n\nBest Regards,\nThe Stylehub Team",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[order.email],
+                fail_silently=True,
+            )
+        except:
+            pass
+            
         messages.success(request, 'Order cancelled.')
     return redirect('my_orders')
 
@@ -641,6 +669,18 @@ def user_signup(request):
         user = User.objects.create_user(username=email, email=email, password=password)
         user.first_name = request.POST.get('full_name')
         user.save()
+        
+        try:
+            send_mail(
+                subject='Welcome to Stylehub!',
+                message=f"Hi {user.first_name},\n\nWelcome to Stylehub! Your account has been successfully created.\n\nBest Regards,\nThe Stylehub Team",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[user.email],
+                fail_silently=True,
+            )
+        except:
+            pass
+            
         messages.success(request, "Account created! Please login.")
         return redirect('/auth/?tab=login') 
     return redirect('auth')
@@ -665,6 +705,21 @@ def contact(request):
 
 def contact_submit(request):
     if request.method == 'POST':
+        full_name = request.POST.get('full_name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject', 'Contact Form Submission')
+        
+        try:
+            send_mail(
+                subject=f'Re: {subject} | Stylehub Support',
+                message=f"Hi {full_name},\n\nThank you for reaching out to us. We have received your message regarding '{subject}' and our team will get back to you shortly.\n\nBest Regards,\nThe Stylehub Team",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[email],
+                fail_silently=True,
+            )
+        except:
+            pass
+            
         messages.success(request, 'Message sent successfully!')
     return redirect('contact')
 
