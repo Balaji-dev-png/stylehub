@@ -107,7 +107,7 @@ def search_result(request):
 @user_passes_test(is_admin, login_url='home')
 def admin_dashboard(request):
     products = Product.objects.all().order_by('-created_at')
-    orders = Order.objects.all().order_by('-created_at')
+    orders = Order.objects.prefetch_related('items__product').all().order_by('-created_at')
     categories = Category.objects.all()
     
     total_revenue = sum(order.total_price for order in orders if order.status != 'Cancelled')
@@ -126,6 +126,14 @@ def admin_dashboard(request):
 
 
 
+
+
+
+
+@user_passes_test(is_admin, login_url='home')
+def admin_order_detail(request, order_id):
+    order = get_object_or_404(Order.objects.prefetch_related('items__product'), id=order_id)
+    return render(request, 'admin_order_detail.html', {'order': order})
 
 
 

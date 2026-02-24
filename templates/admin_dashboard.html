@@ -186,7 +186,9 @@
 
     <header>
         <nav class="navbar">
-            <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;"><div class="logo">Style<span>hub</span> Admin</div></a>
+            <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">
+                <div class="logo">Style<span>hub</span> Admin</div>
+            </a>
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">Exit Admin</a></li>
             </ul>
@@ -330,8 +332,7 @@
                     </thead>
                     <tbody>
                         {% for order in recent_orders %}
-                        <tr class="order-row"
-                            onclick="const row=document.getElementById('details-{{ order.id }}'); if(row) row.style.display = row.style.display === 'table-row' ? 'none' : 'table-row';">
+                        <tr class="order-row" onclick="window.location.href='{% url 'admin_order_detail' order.id %}'">
                             <td>#{{ order.id }}</td>
                             <td>{{ order.full_name }}</td>
                             <td>{{ order.created_at|date:"M d, Y" }}</td>
@@ -359,15 +360,6 @@
                                 {% else %}
                                 <span style="font-size: 12px; color: #aaa;">N/A</span>
                                 {% endif %}
-                            </td>
-                        </tr>
-                        <tr id="details-{{ order.id }}" class="order-details-row">
-                            <td colspan="6" style="padding: 0;">
-                                <div class="order-details-content">
-                                    <p><strong>Email:</strong> {{ order.email }}</p>
-                                    <p><strong>Delivery Address:</strong> {{ order.address }}</p>
-                                    <p><strong>City:</strong> {{ order.city }}</p>
-                                </div>
                             </td>
                         </tr>
                         {% empty %}

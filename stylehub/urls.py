@@ -46,6 +46,7 @@ urlpatterns = [
     path('custom-admin/product/delete/<int:product_id>/', views.admin_delete_product, name='admin_delete_product'),
     path('custom-admin/order/cancel/<int:order_id>/', views.admin_cancel_order, name='admin_cancel_order'),
     path('custom-admin/order/update-status/<int:order_id>/', views.admin_update_order_status, name='admin_update_order_status'),
+    path('custom-admin/order/<int:order_id>/', views.admin_order_detail, name='admin_order_detail'),
     path('custom-admin/category/add/', views.admin_add_category, name='admin_add_category'),
     path('custom-admin/category/delete/<int:category_id>/', views.admin_delete_category, name='admin_delete_category'),
 
