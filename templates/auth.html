@@ -21,7 +21,7 @@
 <body>
 
     <nav class="navbar">
-        <div class="logo">Style<span>hub</span></div>
+        <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;"><div class="logo">Style<span>hub</span></div></a>
         <ul class="nav-links">
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'pro_list' %}">Shop</a></li>
@@ -42,7 +42,7 @@
 
     <div class="main-content">
         <div class="auth-card reveal-on-scroll">
-            <div class="card-logo">Style<span>hub</span></div>
+            <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;"><div class="card-logo">Style<span>hub</span></div></a>
 
             {% if messages %}
             <div class="messages-container">
