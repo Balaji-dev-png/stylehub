@@ -40,7 +40,12 @@ urlpatterns = [
     path('404/', views.page_not_found, name='page_not_found'),
     
     # Custom Admin Dashboard
+    path('custom-admin/auth/', views.admin_auth_view, name='admin_auth'),
+    path('custom-admin/login/', views.admin_login, name='admin_login'),
+    path('custom-admin/signup/', views.admin_signup, name='admin_signup'),
     path('custom-admin/', views.admin_dashboard, name='admin_dashboard'),
+    path('custom-admin/seller/', views.seller_dashboard, name='seller_dashboard'),
+    path('custom-admin/distributor/', views.distributor_dashboard, name='distributor_dashboard'),
     path('custom-admin/product/add/', views.admin_add_product, name='admin_add_product'),
     path('custom-admin/product/edit/<int:product_id>/', views.admin_edit_product, name='admin_edit_product'),
     path('custom-admin/product/delete/<int:product_id>/', views.admin_delete_product, name='admin_delete_product'),
@@ -61,6 +66,7 @@ urlpatterns = [
     path('shop/', views.product_list, name='pro_list'),
     path('shop/<slug:category_slug>/', views.product_list, name='pro_list_by_category'),
     path('product/<slug:slug>/', views.product_detail, name='pro_detail'),
+    path('product/<int:product_id>/review/', views.submit_review, name='submit_review'),
     path('new-arrivals/', views.new_arrivals, name='new'),
     path('search/', views.search_result, name='search_result'),
 

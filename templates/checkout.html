@@ -166,11 +166,21 @@
         }
     </script>
 
-    <!-- ADMIN FLOATING BUTTON -->
-    {% if user.is_authenticated and user.is_superuser %}
-    <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-        ⚙️ Admin Panel
-    </a>
+            <!-- ADMIN FLOATING BUTTON -->
+    {% if user.is_authenticated %}
+        {% if user.userprofile.role == 'Seller' %}
+            <a href="{% url 'seller_dashboard' %}" class="floating-admin-btn">
+                ⚙️ Seller Dashboard
+            </a>
+        {% elif user.userprofile.role == 'Distributor' %}
+            <a href="{% url 'distributor_dashboard' %}" class="floating-admin-btn">
+                ⚙️ Distributor Dashboard
+            </a>
+        {% elif user.is_superuser or user.userprofile.role == 'Admin' %}
+            <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+                ⚙️ Admin Dashboard
+            </a>
+        {% endif %}
     {% endif %}
 </body>
 

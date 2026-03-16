@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <script>
         // Inject theme early to prevent flash of white content
@@ -15,11 +16,14 @@
     <script src="{% static 'main.js' %}?v=3" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
     <header>
         <nav class="navbar">
-            <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;"><div class="logo">Style<span>hub</span> Admin</div></a>
+            <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">
+                <div class="logo">Style<span>hub</span> Admin</div>
+            </a>
             <ul class="nav-links">
                 <li><a href="{% url 'admin_dashboard' %}">Back to Dashboard</a></li>
             </ul>
@@ -29,10 +33,10 @@
     <main class="profile-container" style="justify-content: center; max-width: 800px;">
         <div class="settings-card" style="width: 100%;">
             <h3>{% if product %}Edit Product: {{ product.name }}{% else %}Add New Product{% endif %}</h3>
-            
+
             <form class="settings-form" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                
+
                 <div class="input-group">
                     <label>Product Name</label>
                     <input type="text" name="name" value="{{ product.name|default:'' }}" required>
@@ -41,27 +45,39 @@
                 <div class="form-row">
                     <div class="input-group">
                         <label>Category</label>
-                        <select name="category" style="width:100%; padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--input-bg); color:var(--text-main); outline:none;" required>
+                        <select name="category"
+                            style="width:100%; padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--input-bg); color:var(--text-main); outline:none;"
+                            required>
                             {% for cat in categories %}
-                                <option value="{{ cat.id }}" {% if product and product.category.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                            <option value="{{ cat.id }}" {% if product and product.category.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    
+
                     <div class="input-group">
                         <label>Price ($)</label>
                         <input type="number" step="0.01" name="price" value="{{ product.price|default:'' }}" required>
                     </div>
-                    
+
                     <div class="input-group">
                         <label>Stock Quantity</label>
                         <input type="number" name="stock" value="{{ product.stock|default:'10' }}" required>
                     </div>
                 </div>
 
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Rating (0.0 to 5.0)</label>
+                        <input type="number" step="0.1" min="0" max="5" name="rating"
+                            value="{{ product.rating|default:'4.5' }}" required>
+                    </div>
+                </div>
+
                 <div class="input-group">
                     <label>Description</label>
-                    <textarea name="description" rows="5" style="width:100%; padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--input-bg); color:var(--text-main); outline:none; resize:none;" required>{{ product.description|default:'' }}</textarea>
+                    <textarea name="description" rows="5"
+                        style="width:100%; padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--input-bg); color:var(--text-main); outline:none; resize:none;"
+                        required>{{ product.description|default:'' }}</textarea>
                 </div>
 
                 <div class="form-row">
@@ -76,28 +92,36 @@
                 </div>
 
                 <!-- VISIBILITY OPTIONS -->
-                <h4 style="margin: 20px 0 10px; font-size: 14px; color: var(--text-muted); border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">Visibility Options</h4>
-                
-                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; background: var(--input-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <h4
+                    style="margin: 20px 0 10px; font-size: 14px; color: var(--text-muted); border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">
+                    Visibility Options</h4>
+
+                <div
+                    style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; background: var(--input-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
                     <div style="display:flex; align-items:center; gap:10px;">
                         <input type="checkbox" name="is_featured" id="is_featured" style="width:auto;" {% if not product or product.is_featured %}checked{% endif %}>
-                        <label for="is_featured" style="margin:0; cursor:pointer;">Show on <b>Home Page</b> (Featured)</label>
+                        <label for="is_featured" style="margin:0; cursor:pointer;">Show on <b>Home Page</b>
+                            (Featured)</label>
                     </div>
 
                     <div style="display:flex; align-items:center; gap:10px;">
                         <input type="checkbox" name="show_in_shop" id="show_in_shop" style="width:auto;" {% if not product or product.show_in_shop %}checked{% endif %}>
-                        <label for="show_in_shop" style="margin:0; cursor:pointer;">Show in <b>Main Shop</b> Page</label>
+                        <label for="show_in_shop" style="margin:0; cursor:pointer;">Show in <b>Main Shop</b>
+                            Page</label>
                     </div>
 
                     <div style="display:flex; align-items:center; gap:10px;">
                         <input type="checkbox" name="is_new_arrival" id="is_new_arrival" style="width:auto;" {% if not product or product.is_new_arrival %}checked{% endif %}>
-                        <label for="is_new_arrival" style="margin:0; cursor:pointer;">Show in <b>New Arrivals</b></label>
+                        <label for="is_new_arrival" style="margin:0; cursor:pointer;">Show in <b>New
+                                Arrivals</b></label>
                     </div>
                 </div>
 
                 <div class="input-group" style="display:flex; align-items:center; gap:10px; margin-bottom: 10px;">
                     <input type="checkbox" name="is_available" id="is_available" style="width:auto;" {% if not product or product.is_available %}checked{% endif %}>
-                    <label for="is_available" style="margin:0; cursor:pointer; color: #2ecc71; font-weight: 600;">Product is Active (In Stock / Purchasable)</label>
+                    <label for="is_available"
+                        style="margin:0; cursor:pointer; color: #2ecc71; font-weight: 600;">Product is Active (In Stock
+                        / Purchasable)</label>
                 </div>
 
                 <button type="submit" class="save-btn" style="width: 100%; margin-top: 10px;">
@@ -109,10 +133,21 @@
 
 
     <!-- ADMIN FLOATING BUTTON -->
-    {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-            ⚙️ Admin Panel
-        </a>
+    {% if user.is_authenticated %}
+    {% if user.userprofile.role == 'Seller' %}
+    <a href="{% url 'seller_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Seller Dashboard
+    </a>
+    {% elif user.userprofile.role == 'Distributor' %}
+    <a href="{% url 'distributor_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Distributor Dashboard
+    </a>
+    {% elif user.is_superuser or user.userprofile.role == 'Admin' %}
+    <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Admin Dashboard
+    </a>
+    {% endif %}
     {% endif %}
 </body>
+
 </html>

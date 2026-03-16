@@ -11,7 +11,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login & Sign Up | Stylehub</title>
+    <title>Admin Login & Sign Up | Stylehub</title>
     <link rel="stylesheet" href="{% static 'theme.css' %}?v=3">
     <link rel="stylesheet" href="{% static 'style8.css' %}?v=2">
     <script src="{% static 'main.js' %}?v=3" defer></script>
@@ -45,7 +45,7 @@
     <div class="main-content">
         <div class="auth-card reveal-on-scroll">
             <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">
-                <div class="card-logo">Style<span>hub</span></div>
+                <div class="card-logo">Admin<span>Suite</span></div>
             </a>
 
             {% if messages %}
@@ -63,7 +63,7 @@
                 <button class="tab-btn" onclick="toggleAuth('signup')">Sign Up</button>
             </div>
 
-            <form id="login-form" class="auth-form active" method="POST" action="{% url 'login' %}">
+            <form id="login-form" class="auth-form active" method="POST" action="{% url 'admin_login' %}">
                 {% csrf_token %}
                 <div class="input-group">
                     <label>Email Address or Username</label>
@@ -81,7 +81,7 @@
                 <button type="submit" class="auth-btn">Sign In</button>
             </form>
 
-            <form id="signup-form" class="auth-form" method="POST" action="{% url 'signup' %}">
+            <form id="signup-form" class="auth-form" method="POST" action="{% url 'admin_signup' %}">
                 {% csrf_token %}
                 <div class="input-group">
                     <label>Full Name</label>
@@ -90,6 +90,14 @@
                 <div class="input-group">
                     <label>Username</label>
                     <input type="text" name="username" placeholder="johndoe123" required>
+                </div>
+                <div class="input-group">
+                    <label>Account Role</label>
+                    <select name="role" required
+                        style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-card); color: var(--text-main); font-size: 14px;">
+                        <option value="Seller">Seller (Retail/B2C)</option>
+                        <option value="Distributor">Distributor (Wholesale/B2B)</option>
+                    </select>
                 </div>
                 <div class="input-group">
                     <label>Email Address</label>

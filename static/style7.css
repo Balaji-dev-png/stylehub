@@ -6,7 +6,7 @@
 }
 
 body {
-    background-color: #f4f7f6;
+    background-color: var(--bg-main);
     height: 100vh;
     display: flex;
     align-items: center;
@@ -20,10 +20,10 @@ body {
 }
 
 .success-card {
-    background: #fff;
+    background: var(--bg-card);
     padding: 50px 40px;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
     text-align: center;
 }
 
@@ -47,12 +47,12 @@ body {
 
 h1 {
     font-size: 2rem;
-    color: #222;
+    color: var(--text-main);
     margin-bottom: 15px;
 }
 
 .thanks-msg {
-    color: #666;
+    color: var(--text-muted);
     font-size: 15px;
     line-height: 1.6;
     margin-bottom: 30px;
@@ -60,11 +60,12 @@ h1 {
 
 /* Order ID Info Box */
 .order-box {
-    background: #f9f9f9;
+    background: var(--input-bg);
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 30px;
-    border: 1px dashed #ddd;
+    border: 1px dashed var(--border-color);
+    color: var(--text-main);
 }
 
 .order-detail {
@@ -72,6 +73,7 @@ h1 {
     justify-content: space-between;
     margin-bottom: 10px;
     font-size: 14px;
+    color: var(--text-main);
 }
 
 .order-detail:last-child {
@@ -79,12 +81,12 @@ h1 {
 }
 
 .order-detail span {
-    color: #888;
+    color: var(--text-muted);
 }
 
 .email-notice {
     font-size: 13px;
-    color: #999;
+    color: var(--text-muted);
     margin-bottom: 30px;
 }
 
@@ -111,12 +113,12 @@ h1 {
 
 .btn-secondary {
     background: transparent;
-    color: #333;
+    color: var(--text-main);
     text-decoration: none;
     padding: 10px;
     font-size: 14px;
     font-weight: 600;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--text-main);
     display: inline-block;
     align-self: center;
 }
@@ -131,7 +133,7 @@ h1 {
     .success-card {
         padding: 30px 20px;
     }
-    
+
     h1 {
         font-size: 1.5rem;
     }

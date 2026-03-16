@@ -15,6 +15,15 @@
 <img width="2879" height="1214" alt="Screenshot 2026-02-20 220643" src="https://github.com/user-attachments/assets/065c1e87-b05a-45f9-80c7-64cb0e949fd9" />
 <img width="2879" height="1508" alt="Screenshot 2026-02-20 220617" src="https://github.com/user-attachments/assets/344586f9-9422-48cc-97ed-9c6be322a92b" />
 
+## 🌟 New Features: Multi-Vendor & Admin Isolation
+
+* **🔐 Dedicated Admin Auth:** A standalone `/custom-admin/auth/` portal exclusively for vendors and store administrators.
+* **🛡️ Data Isolation:** Each Admin gets a perfectly isolated dashboard. They can only see, edit, and delete their own products and orders.
+* **📈 Accurate Revenue Tracking:** Revenue charts are automatically calculated based on only the products owned by the currently logged-in admin.
+* **⚡ Backward Compatibility:** Products without an explicitly assigned admin (legacy items) automatically fall back to the main superuser to ensure nothing gets lost.
+
+*(Please add screenshots of the new Admin Auth page and Isolated Dashboard here)*
+
 
 ## ✨ Key Features
 
@@ -29,9 +38,10 @@
 
 ### ⚙️ Custom Admin Dashboard (`/custom-admin/`)
 
-* **📊 Business Intelligence:** Real-time metrics for total revenue, order volume, and product inventory.
+* **📊 Business Intelligence:** Real-time metrics for total revenue, order volume, and product inventory based directly on the admin's own assigned items.
 * **🚀 Bulk Operations:** Quickly categorize inventory with comma-separated tag inputs.
 * **🎯 Visibility Control:** One-click toggles to feature products on the Homepage, New Arrivals, or the Main Shop.
+* **🔒 Seamless Isolation:** Automatically tracks the ownership of every product and category you create.
 
 ---
 

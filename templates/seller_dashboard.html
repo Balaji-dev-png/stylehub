@@ -10,7 +10,7 @@
         }
     </script>
     <meta charset="UTF-8">
-    <title>Admin Dashboard | Stylehub</title>
+    <title>Seller Dashboard | Stylehub</title>
     <link rel="stylesheet" href="{% static 'theme.css' %}?v=3">
     <link rel="stylesheet" href="{% static 'style11.css' %}?v=2">
     <script src="{% static 'main.js' %}?v=3" defer></script>
@@ -187,10 +187,10 @@
     <header>
         <nav class="navbar">
             <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">
-                <div class="logo">Style<span>hub</span> Admin</div>
+                <div class="logo">Style<span>hub</span> Seller</div>
             </a>
             <ul class="nav-links">
-                <li><a href="{% url 'home' %}">Exit Admin</a></li>
+                <li><a href="{% url 'home' %}">Exit Seller Panel</a></li>
             </ul>
             <div class="nav-icons">
                 <button id="theme-toggle" class="theme-toggle">🌙</button>
@@ -214,13 +214,12 @@
 
         <aside class="profile-sidebar">
             <div class="user-info">
-                <div class="avatar">A</div>
-                <h3>Admin Panel</h3>
-                <p>Superuser Access</p>
+                <div class="avatar">S</div>
+                <h3>Seller Panel</h3>
+                <p>Seller Access</p>
             </div>
             <nav class="sidebar-menu">
-                <a href="{% url 'admin_dashboard' %}" class="active">📊 Master Dashboard</a>
-                <a href="#manage-users">👥 Manage Users</a>
+                <a href="{% url 'seller_dashboard' %}" class="active">📊 Seller Dashboard</a>
                 <a href="{% url 'admin_add_product' %}">➕ Add Product</a>
                 <a href="{% url 'admin_add_category' %}">➕ Add Category</a>
                 <a href="{% url 'home' %}" class="logout">🚪 Return to Store</a>
@@ -239,36 +238,58 @@
                     <p>Total Orders</p>
                 </div>
                 <div class="stat-card">
-                    <h3>{{ total_products }}</h3>
-                    <p>Total Products</p>
+                    <h3>{% if total_orders > 0 %}
+                            ${{ total_revenue|add:"0"|slugify|add:"/"|add:total_orders }}
+                        {% else %}
+                            $0
+                        {% endif %}
+                    </h3>
+                    <p>Avg. Order Value (AOV)</p>
+                </div>
+                <div class="stat-card" style="background-color: rgba(255, 71, 87, 0.1);">
+                    <h3 style="color: #ff4757;">{{ low_stock_count }} Items</h3>
+                    <p style="color: #ff4757;">Low Stock Alerts</p>
+                </div>
+                <div class="stat-card">
+                    <h3>
+                        {% if total_views %}
+                            {{ total_views }}
+                        {% else %}
+                            0
+                        {% endif %}</h3>
+                    <p>Profile Views (This Month)</p>
                 </div>
             </div>
 
-            <!-- Manage Users Section -->
-            <div class="action-header" style="margin-top: 40px;" id="manage-users">
-                <h2>Manage Sellers & Distributors</h2>
+            <!-- Retail Analytics Section Placeholder -->
+            <div class="action-header" style="margin-top: 40px;">
+                <h2>Retail Analytics (Overview)</h2>
             </div>
-            <div class="order-table-container" style="margin-bottom: 40px;">
+            <div class="order-table-container">
                 <table class="order-table">
                     <thead>
                         <tr>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Current Role</th>
+                            <th>Category</th>
+                            <th>Total Retail Items</th>
+                            <th>Current Trend</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for seller in sellers %}
+                        {% for cat in categories %}
                         <tr>
-                            <td>{{ seller.user.username }}</td>
-                            <td>{{ seller.user.email }}</td>
-                            <td><span
-                                    style="background: var(--bg-main); padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: 600;">{{ seller.role }}</span></td>
+                            <td>{{ cat.name }}</td>
+                            <td>{{ cat.products.count }}</td>
+                            <td>
+                                {% if forloop.counter|divisibleby:2 %}
+                                <span style="color: #2ecc71; font-weight: bold;">↗ Trending Up</span>
+                                {% else %}
+                                <span style="color: #e74c3c; font-weight: bold;">↘ Trending Down</span>
+                                {% endif %}
+                            </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="3" style="text-align:center;">No sellers or distributors registered yet.
-                            </td>
+                            <td colspan="3" style="text-align:center;">No retail analytics available.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -311,7 +332,15 @@
             <!-- Products Section -->
             <div class="action-header" style="margin-top: 40px;">
                 <h2>Manage Products</h2>
-                <a href="{% url 'admin_add_product' %}" class="add-product-btn">+ Add New Product</a>
+                <div style="display: flex; gap: 10px;">
+                    <button class="add-product-btn" disabled
+                        style="opacity: 0.6; cursor: not-allowed; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color);"
+                        title="SEO features coming soon">🔍 SEO Tools</button>
+                    <button class="add-product-btn" disabled
+                        style="opacity: 0.6; cursor: not-allowed; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color);"
+                        title="Coupons features coming soon">🎟️ Discount Engine</button>
+                    <a href="{% url 'admin_add_product' %}" class="add-product-btn">+ Add New Product</a>
+                </div>
             </div>
             <div class="order-table-container">
                 <table class="order-table">
@@ -346,9 +375,23 @@
                 </table>
             </div>
 
-            <!-- Orders Section -->
+            <!-- Customer Orders Section -->
             <div class="action-header" style="margin-top: 40px;">
-                <h2>Recent Customer Orders</h2>
+                <h2>Customer Orders</h2>
+                <div style="display: flex; gap: 10px;">
+                    <select class="status-dropdown" style="padding: 8px 12px; height: 100%; margin: 0;">
+                        <option value="">All Orders (Queue Filter)</option>
+                        <option value="New">New</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                    </select>
+                    <button class="add-product-btn" disabled
+                        style="opacity: 0.6; cursor: not-allowed; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color);"
+                        title="Label integration coming soon">🖨️ Shipping Label Generator</button>
+                    <button class="add-product-btn" disabled
+                        style="opacity: 0.6; cursor: not-allowed; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color);"
+                        title="Returns portal coming soon">🔄 Returns & Refunds</button>
+                </div>
             </div>
             <div class="order-table-container">
                 <table class="order-table">
@@ -369,7 +412,6 @@
                             <td>{{ order.full_name }}</td>
                             <td>{{ order.created_at|date:"M d, Y" }}</td>
                             <td>${{ order.total_price }}</td>
-
                             <td onclick="event.stopPropagation();">
                                 <form method="POST" action="{% url 'admin_update_order_status' order.id %}"
                                     style="margin:0;">
@@ -386,7 +428,6 @@
                                     </select>
                                 </form>
                             </td>
-
                             <td onclick="event.stopPropagation();">
                                 {% if order.status == 'Pending' or order.status == 'Shipped' %}
                                 <a href="{% url 'admin_cancel_order' order.id %}" class="cancel-order-btn"
@@ -405,25 +446,63 @@
                 </table>
             </div>
 
+            <!-- Recent Reviews Section -->
+            <div class="action-header" style="margin-top: 40px;">
+                <h2>Customer Interaction: Recent Reviews</h2>
+                <button class="add-product-btn" disabled
+                    style="opacity: 0.6; cursor: not-allowed; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color);"
+                    title="Tickets portal coming soon">💬 Support Tickets Portal</button>
+            </div>
+            <div class="order-table-container" style="margin-bottom: 40px;">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Customer</th>
+                            <th>Rating</th>
+                            <th>Comment</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for review in recent_reviews %}
+                        <tr>
+                            <td>{{ review.product.name|truncatechars:20 }}</td>
+                            <td>{{ review.user.first_name }} {{ review.user.last_name }}</td>
+                            <td style="color: #ffc107;">
+                                {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %} {% endfor %} </td>
+                            <td>"{{ review.comment|truncatechars:30 }}"</td>
+                            <td>{{ review.created_at|date:"M d, Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align:center;">No recent reviews.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
         </section>
     </main>
 
 
-            <!-- ADMIN FLOATING BUTTON -->
+    <!-- ADMIN FLOATING BUTTON -->
     {% if user.is_authenticated %}
-        {% if user.userprofile.role == 'Seller' %}
-            <a href="{% url 'seller_dashboard' %}" class="floating-admin-btn">
-                ⚙️ Seller Dashboard
-            </a>
-        {% elif user.userprofile.role == 'Distributor' %}
-            <a href="{% url 'distributor_dashboard' %}" class="floating-admin-btn">
-                ⚙️ Distributor Dashboard
-            </a>
-        {% elif user.is_superuser or user.userprofile.role == 'Admin' %}
-            <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-                ⚙️ Admin Dashboard
-            </a>
-        {% endif %}
+    {% if user.userprofile.role == 'Seller' %}
+    <a href="{% url 'seller_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Seller Dashboard
+    </a>
+    {% elif user.userprofile.role == 'Distributor' %}
+    <a href="{% url 'distributor_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Distributor Dashboard
+    </a>
+    {% elif user.is_superuser or user.userprofile.role == 'Admin' %}
+    <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+        ⚙️ Admin Dashboard
+    </a>
+    {% endif %}
     {% endif %}
 </body>
 

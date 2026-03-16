@@ -11,7 +11,10 @@ from django.db.models import Q
 import stripe
 from django.conf import settings
 from django.urls import reverse
-from .models import Product, Category, Cart, CartItem, Order, OrderItem, UserProfile, Wishlist
+from .models import (
+    Product, Category, Cart, CartItem, Order, OrderItem, UserProfile, Wishlist, Review,
+    Coupon, SupportTicket, Warehouse, InventoryBatch, TieredPricing, CreditAccount
+)
 
 
 
@@ -75,7 +78,41 @@ def product_detail(request, slug):
         if product in wishlist.products.all():
             in_wishlist = True
             
-    return render(request, 'pro_detail.html', {'product': product, 'in_wishlist': in_wishlist})
+    reviews = product.reviews.all().order_by('-created_at')
+            
+    return render(request, 'pro_detail.html', {'product': product, 'in_wishlist': in_wishlist, 'reviews': reviews})
+
+@login_required(login_url='auth')
+def submit_review(request, product_id):
+    if request.method == 'POST':
+        product = get_object_or_404(Product, id=product_id)
+        rating = int(request.POST.get('rating', 5))
+        comment = request.POST.get('comment', '')
+        
+        # Check if user already reviewed
+        existing_review = Review.objects.filter(product=product, user=request.user).first()
+        if existing_review:
+            existing_review.rating = rating
+            existing_review.comment = comment
+            existing_review.save()
+            messages.success(request, 'Your review has been updated.')
+        else:
+            Review.objects.create(
+                product=product,
+                user=request.user,
+                rating=rating,
+                comment=comment
+            )
+            messages.success(request, 'Your review has been submitted.')
+            
+        # Recalculate product average rating
+        all_reviews = product.reviews.all()
+        if all_reviews:
+            avg_rating = sum(r.rating for r in all_reviews) / len(all_reviews)
+            product.rating = round(avg_rating, 1)
+            product.save()
+            
+    return redirect('pro_detail', slug=product.slug)
 
 
 
@@ -104,13 +141,94 @@ def search_result(request):
 # 2. CUSTOM ADMIN DASHBOARD VIEWS
 # ==========================================
 
-@user_passes_test(is_admin, login_url='home')
+def admin_auth_view(request):
+    return render(request, 'admin_auth.html')
+
+def admin_login(request):
+    if request.method == 'POST':
+        login_id = request.POST.get('login_id') or request.POST.get('email')
+        user_obj = User.objects.filter(Q(email=login_id) | Q(username=login_id)).first()
+        if user_obj and user_obj.is_superuser:
+            user = authenticate(request, username=user_obj.username, password=request.POST.get('password'))
+            if user:
+                login(request, user)
+                role = user.userprofile.role if hasattr(user, 'userprofile') else 'Customer'
+                if role == 'Seller':
+                    return redirect('seller_dashboard')
+                elif role == 'Distributor':
+                    return redirect('distributor_dashboard')
+                return redirect('admin_dashboard')
+        messages.error(request, 'Invalid email or password for admin.')
+        return redirect('admin_auth')
+    return redirect('admin_auth')
+
+def admin_signup(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        username = request.POST.get('username')
+        
+        if password != request.POST.get('confirm_password'):
+            messages.error(request, "Passwords do not match.")
+            return redirect('admin_auth')
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already registered.")
+            return redirect('admin_auth')
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already taken.")
+            return redirect('admin_auth')
+        
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.first_name = request.POST.get('full_name')
+        user.is_superuser = True
+        user.save()
+        
+        # Set Role
+        role = request.POST.get('role', 'Seller') # default to Seller if not provided or hidden
+        if hasattr(user, 'userprofile'):
+            user.userprofile.role = role
+            user.userprofile.save()
+        else:
+            UserProfile.objects.create(user=user, role=role)
+        
+        try:
+            send_mail(
+                subject='Welcome to Stylehub Admin Suite!',
+                message=f"Hi {user.first_name},\n\nYour admin account has been successfully created.\n\nBest Regards,\nThe Stylehub Team",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[user.email],
+                fail_silently=True,
+            )
+        except:
+            pass
+            
+        messages.success(request, "Admin Account created! Please login.")
+        return redirect('/custom-admin/auth/?tab=login') 
+    return redirect('admin_auth')
+
+@user_passes_test(is_admin, login_url='admin_auth')
 def admin_dashboard(request):
-    products = Product.objects.all().order_by('-created_at')
-    orders = Order.objects.prefetch_related('items__product').all().order_by('-created_at')
-    categories = Category.objects.all()
+    role = request.user.userprofile.role if hasattr(request.user, 'userprofile') else 'Customer'
     
-    total_revenue = sum(order.total_price for order in orders if order.status != 'Cancelled')
+    if role == 'Seller':
+        return redirect('seller_dashboard')
+    elif role == 'Distributor':
+        return redirect('distributor_dashboard')
+
+    # MASTER ADMIN LOGIC
+    # Check if this is an original "staff" superuser
+    is_original_admin = request.user.is_superuser and request.user.is_staff
+
+    products = Product.objects.all().order_by('-created_at')
+    orders = Order.objects.all().distinct().prefetch_related('items__product').order_by('-created_at')
+    categories = Category.objects.all()
+    sellers = UserProfile.objects.filter(role__in=['Seller', 'Distributor'])
+    
+    total_revenue = sum(
+        item.get_cost() 
+        for order in orders if order.status != 'Cancelled'
+        for item in order.items.all()
+    )
     
     context = {
         'products': products,
@@ -119,9 +237,84 @@ def admin_dashboard(request):
         'total_revenue': total_revenue,
         'total_products': products.count(),
         'categories': categories,
+        'sellers': sellers,
     }
     return render(request, 'admin_dashboard.html', context)
 
+@user_passes_test(is_admin, login_url='admin_auth')
+def seller_dashboard(request):
+    products = Product.objects.filter(admin=request.user).order_by('-created_at')
+    orders = Order.objects.filter(items__product__admin=request.user, is_po=False).distinct().prefetch_related('items__product').order_by('-created_at')
+    categories = Category.objects.filter(admin=request.user)
+    
+    total_revenue = sum(
+        item.get_cost() 
+        for order in orders if order.status != 'Cancelled'
+        for item in order.items.all() if item.product.admin == request.user
+    )
+    
+    # Calculate additional metrics
+    low_stock_count = products.filter(stock__lt=10).count()
+    total_views = sum(product.views_count for product in products)
+    
+    # Fetch recent reviews for this seller's products
+    recent_reviews = Review.objects.filter(product__admin=request.user).order_by('-created_at')[:10]
+    
+    context = {
+        'products': products,
+        'recent_orders': orders[:10],
+        'total_orders': orders.count(),
+        'total_revenue': total_revenue,
+        'total_products': products.count(),
+        'categories': categories,
+        'recent_reviews': recent_reviews,
+        'low_stock_count': low_stock_count,
+        'total_views': total_views,
+    }
+    return render(request, 'seller_dashboard.html', context)
+
+@user_passes_test(is_admin, login_url='admin_auth')
+def distributor_dashboard(request):
+    products = Product.objects.filter(admin=request.user).prefetch_related('tier_prices').order_by('-created_at')
+    
+    # Logistics: Filter for wholesale POs (or all orders for now if none are marked PO)
+    pos = Order.objects.filter(items__product__admin=request.user, is_po=True).distinct().prefetch_related('items__product').order_by('-created_at')
+    if not pos.exists():
+        # Fallback to display something if no POs exist yet
+        pos = Order.objects.filter(items__product__admin=request.user).distinct().prefetch_related('items__product').order_by('-created_at')
+        
+    categories = Category.objects.filter(admin=request.user)
+    
+    # Calculate AR and Volume
+    accounts_receivable = sum(
+        item.get_cost() 
+        for order in pos if order.status != 'Cancelled'
+        for item in order.items.all() if item.product.admin == request.user
+    ) / 1000 # Convert to K
+    
+    volume_shipped = sum(
+        item.quantity 
+        for order in pos if order.status != 'Cancelled'
+        for item in order.items.all() if item.product.admin == request.user
+    ) // 1000 # Convert to Palettes roughly
+    
+    # Total units in warehouse across all batches and products
+    total_units_in_warehouse = sum(product.stock for product in products)
+    
+    # Fetch Credit Accounts
+    credit_accounts = CreditAccount.objects.filter(distributor=request.user).select_related('retailer')
+    
+    context = {
+        'products': products,
+        'recent_orders': pos[:10],  # Using standard orders as Manifests for the UI
+        'total_orders': volume_shipped,
+        'total_revenue': accounts_receivable,
+        'total_products': products.count(),
+        'categories': categories,
+        'credit_accounts': credit_accounts,
+        'total_units_in_warehouse': total_units_in_warehouse,
+    }
+    return render(request, 'distributor_dashboard.html', context)
 
 
 
@@ -130,16 +323,21 @@ def admin_dashboard(request):
 
 
 
-@user_passes_test(is_admin, login_url='home')
+
+@user_passes_test(is_admin, login_url='admin_auth')
 def admin_order_detail(request, order_id):
     order = get_object_or_404(Order.objects.prefetch_related('items__product'), id=order_id)
     return render(request, 'admin_order_detail.html', {'order': order})
 
 
 
-@user_passes_test(is_admin, login_url='home')
+@user_passes_test(is_admin, login_url='admin_auth')
 def admin_add_product(request):
-    categories = Category.objects.all()
+    is_original_admin = request.user.is_superuser and request.user.is_staff
+    if is_original_admin:
+        categories = Category.objects.filter(Q(admin=request.user) | Q(admin__isnull=True))
+    else:
+        categories = Category.objects.filter(admin=request.user)
     if request.method == 'POST':
         category = get_object_or_404(Category, id=request.POST.get('category'))
         
@@ -151,10 +349,12 @@ def admin_add_product(request):
             description=request.POST.get('description'),
             image=request.FILES.get('image'),
             image_url=request.POST.get('image_url'),
+            rating=request.POST.get('rating', 4.5),
             # SAVING VISIBILITY OPTIONS
             is_featured = request.POST.get('is_featured') == 'on',
             is_new_arrival = request.POST.get('is_new_arrival') == 'on',
-            show_in_shop = request.POST.get('show_in_shop') == 'on'
+            show_in_shop = request.POST.get('show_in_shop') == 'on',
+            admin=request.user
         )
         messages.success(request, "Product added successfully!")
         return redirect('admin_dashboard')
@@ -167,10 +367,22 @@ def admin_add_product(request):
 
 
 
-@user_passes_test(is_admin, login_url='home')
+@user_passes_test(is_admin, login_url='admin_auth')
 def admin_edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    categories = Category.objects.all()
+    is_original_admin = request.user.is_superuser and request.user.is_staff
+    
+    if product.admin is not None and product.admin != request.user:
+        messages.error(request, "You do not have permission to edit this product.")
+        return redirect('admin_dashboard')
+    elif product.admin is None and not is_original_admin:
+        messages.error(request, "You do not have permission to edit this legacy product.")
+        return redirect('admin_dashboard')
+        
+    if is_original_admin:
+        categories = Category.objects.filter(Q(admin=request.user) | Q(admin__isnull=True))
+    else:
+        categories = Category.objects.filter(admin=request.user)
     
     if request.method == 'POST':
         product.name = request.POST.get('name')
@@ -183,6 +395,9 @@ def admin_edit_product(request, product_id):
             product.image = request.FILES.get('image')
         if request.POST.get('image_url'):
             product.image_url = request.POST.get('image_url')
+            
+        if request.POST.get('rating'):
+            product.rating = request.POST.get('rating')
             
         product.is_available = request.POST.get('is_available') == 'on'
         
@@ -203,9 +418,18 @@ def admin_edit_product(request, product_id):
 
 
 
-@user_passes_test(is_admin, login_url='home')
+@user_passes_test(is_admin, login_url='admin_auth')
 def admin_delete_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    is_original_admin = request.user.is_superuser and request.user.is_staff
+
+    if product.admin is not None and product.admin != request.user:
+        messages.error(request, "You do not have permission to delete this product.")
+        return redirect('admin_dashboard')
+    elif product.admin is None and not is_original_admin:
+        messages.error(request, "You do not have permission to delete this legacy product.")
+        return redirect('admin_dashboard')
+        
     product.delete()
     messages.success(request, "Product deleted successfully!")
     return redirect('admin_dashboard')
@@ -215,7 +439,7 @@ def admin_delete_product(request, product_id):
 
 
 
-@user_passes_test(is_admin, login_url='home')
+@user_passes_test(is_admin, login_url='admin_auth')
 def admin_cancel_order(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     
@@ -244,7 +468,7 @@ def admin_cancel_order(request, order_id):
 
 
 
-@user_passes_test(is_admin, login_url='home')
+@user_passes_test(is_admin, login_url='admin_auth')
 def admin_update_order_status(request, order_id):
     if request.method == 'POST':
         order = get_object_or_404(Order, id=order_id)
@@ -281,7 +505,7 @@ def admin_update_order_status(request, order_id):
 
 
 # --- CATEGORY VIEWS (COMMA SEPARATED) ---
-@user_passes_test(is_admin, login_url='home')
+@user_passes_test(is_admin, login_url='admin_auth')
 def admin_add_category(request):
     if request.method == 'POST':
         names = request.POST.get('name')
@@ -289,7 +513,7 @@ def admin_add_category(request):
             category_names = [n.strip() for n in names.split(',') if n.strip()]
             created_count = 0
             for name in category_names:
-                obj, created = Category.objects.get_or_create(name=name)
+                obj, created = Category.objects.get_or_create(name=name, admin=request.user)
                 if created:
                     created_count += 1
             
@@ -308,9 +532,18 @@ def admin_add_category(request):
 
 
 
-@user_passes_test(is_admin, login_url='home')
+@user_passes_test(is_admin, login_url='admin_auth')
 def admin_delete_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
+    is_original_admin = request.user.is_superuser and request.user.is_staff
+
+    if category.admin is not None and category.admin != request.user:
+        messages.error(request, "You do not have permission to delete this category.")
+        return redirect('admin_dashboard')
+    elif category.admin is None and not is_original_admin:
+        messages.error(request, "You do not have permission to delete this legacy category.")
+        return redirect('admin_dashboard')
+        
     category_name = category.name
     category.delete()
     messages.success(request, f"Category '{category_name}' deleted.")
@@ -649,7 +882,8 @@ def auth_view(request):
 
 def user_login(request):
     if request.method == 'POST':
-        user_obj = User.objects.filter(email=request.POST.get('email')).first()
+        login_id = request.POST.get('login_id') or request.POST.get('email')
+        user_obj = User.objects.filter(Q(email=login_id) | Q(username=login_id)).first()
         if user_obj:
             user = authenticate(request, username=user_obj.username, password=request.POST.get('password'))
             if user:
@@ -668,14 +902,18 @@ def user_signup(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
+        username = request.POST.get('username')
         if password != request.POST.get('confirm_password'):
             messages.error(request, "Passwords do not match.")
             return redirect('auth')
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already registered.")
             return redirect('auth')
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already taken.")
+            return redirect('auth')
         
-        user = User.objects.create_user(username=email, email=email, password=password)
+        user = User.objects.create_user(username=username, email=email, password=password)
         user.first_name = request.POST.get('full_name')
         user.save()
         

@@ -31,6 +31,7 @@
         <li><a href="{% url 'profile' %}">Profile</a></li>
     {% else %}
         <li><a href="{% url 'auth' %}">Login</a></li>
+
     {% endif %}
 </ul>
         <div class="nav-icons" style="display: flex; align-items: center;">
@@ -123,7 +124,9 @@
                     <li><a href="{% url 'pro_list' %}">Shop</a></li>
                     <li><a href="{% url 'new' %}">New Arrivals</a></li>
                     <li><a href="{% url 'contact' %}">Our Team</a></li>
-                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>                    {% if not user.is_authenticated %}
+                    <li><a href="{% url 'admin_auth' %}" class="admin-auth-nav" style="color: #ff4757; font-weight: 500;">Seller/Distributor</a></li>
+                    {% endif %}
                 </ul>
             </div>
             <div class="footer-contact">
@@ -135,11 +138,21 @@
         </div>
     </footer>
 
-    <!-- ADMIN FLOATING BUTTON -->
-    {% if user.is_authenticated and user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
-            ⚙️ Admin Panel
-        </a>
+            <!-- ADMIN FLOATING BUTTON -->
+    {% if user.is_authenticated %}
+        {% if user.userprofile.role == 'Seller' %}
+            <a href="{% url 'seller_dashboard' %}" class="floating-admin-btn">
+                ⚙️ Seller Dashboard
+            </a>
+        {% elif user.userprofile.role == 'Distributor' %}
+            <a href="{% url 'distributor_dashboard' %}" class="floating-admin-btn">
+                ⚙️ Distributor Dashboard
+            </a>
+        {% elif user.is_superuser or user.userprofile.role == 'Admin' %}
+            <a href="{% url 'admin_dashboard' %}" class="floating-admin-btn">
+                ⚙️ Admin Dashboard
+            </a>
+        {% endif %}
     {% endif %}
 </body>
 </html>
